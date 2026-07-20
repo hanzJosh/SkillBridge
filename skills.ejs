@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SkillBridge - Browse skills</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">SkillBridge</a>
+            <div class="navbar-nav ms-auto">
+                <% if (user) { %>
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                    <a class="nav-link" href="/logout">Log out</a>
+                <% } else { %>
+                    <a class="nav-link" href="/login">Log in</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <h2 class="mb-4">Browse skills</h2>
+
+        <form action="/skills" method="GET" class="d-flex mb-4" style="max-width: 400px;">
+            <input type="text" class="form-control me-2" name="search" placeholder="Search skills..." value="<%= search %>">
+            <button type="submit" class="btn btn-outline-primary">Search</button>
+        </form>
+
+        <% if (skills.length === 0) { %>
+            <p class="text-muted">No skills found. Try a different search.</p>
+        <% } else { %>
+            <div class="row">
+                <% skills.forEach(skill => { %>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= skill.title %></h5>
+                                <h6 class="card-subtitle mb-2 text-muted"><%= skill.category %> · by <%= skill.username %></h6>
+                                <p class="card-text"><%= skill.description %></p>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between align-items-center">
+                                <strong>$<%= skill.rate %>/hr</strong>
+                                <a href="/review/<%= skill.id %>" class="btn btn-sm btn-primary">View & book</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>
