@@ -5,6 +5,19 @@ const flash = require('connect-flash');
 
 const app = express();
 
+//middleware
+app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
+// Session
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(flash());
+
 // Database
 const db = mysql.createConnection({
     host: 'c237-hannah-mysql.mysql.database.azure.com',
@@ -21,11 +34,23 @@ db.connect((err) => {
     console.log('Connected to MySQL database');
 });
 
+// Auth middleware
+function isAuthenticated(req, res, next) {
+    if (req.session.user) { return next(); }
+    res.redirect('/login');
+}
+
+function isAdmin(req, res, next) {
+  if (req.session.user && req.session.user.role === 'admin') return next();
+  res.status(403).send('Access denied');
+}
 
 // Home
 app.get('/', (req, res) => {
     res.render('index');
 });
+
+
 
 // start server
 const PORT = process.env.PORT || 3000;
