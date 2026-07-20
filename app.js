@@ -45,6 +45,8 @@ function isAdmin(req, res, next) {
   res.status(403).send('Access denied');
 }
 
+// Routes //
+
 // Home
 app.get('/', (req, res) => {
     res.render('index');
