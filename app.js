@@ -97,7 +97,7 @@ app.post('/login', (req, res) => {
         const user = results[0];
         const match = await bcrypt.compare(password, user.password);
         if (match) {
-            req.session.user = { id: user.id, username: user.username, role: user.role };
+            req.session.user = { id: user.user_id, username: user.username, role: user.role };
             res.redirect('/');
         } else {
             req.flash('message', 'Invalid credentials');
