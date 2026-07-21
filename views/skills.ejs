@@ -1,1 +1,27 @@
+<%- include('partials/navbar', { user: user }) %>
 
+<h1>My Skill Listings</h1>
+<a href="/skills/add">Create New Listing</a>
+
+<% if (skills.length === 0) { %>
+    <p>You have not created any listings yet.</p>
+<% } %>
+
+<% skills.forEach(skill => { %>
+    <div>
+        <h2><%= skill.title %></h2>
+        <p><strong>Category:</strong> <%= skill.category %></p>
+        <p><strong>Level:</strong> <%= skill.level %></p>
+        <p><strong>Price:</strong> $<%= skill.price %></p>
+        <p><%= skill.description %></p>
+
+        <a href="/skills/<%= skill.skill_id %>/edit">Edit</a>
+
+        <form action="/skills/<%= skill.skill_id %>/delete" method="POST">
+            <button type="submit" onclick="return confirm('Delete this listing?')">
+                Delete
+            </button>
+        </form>
+    </div>
+    <hr>
+<% }) %>
