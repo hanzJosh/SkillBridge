@@ -32,6 +32,27 @@ db.connect((err) => {
     console.log('Connected to MySQL database');
 });
 
+
+
+
+// Auth middleware
+function isAuthenticated(req, res, next) {
+    if (req.session.user) { return next(); }
+    res.redirect('/login');
+}
+
+function isAdmin(req, res, next) {
+    if (req.session.user && req.session.user.role === 'admin') return next();
+    res.status(403).send('Access denied');
+}
+
+// Routes //
+
+// Home route 
+app.get('/', (req, res) => {
+    res.render('index', { user: req.session.user });
+});
+
 // Register
 app.get('/register', (req, res) => {
     res.render('register', { message: req.flash('message') });
@@ -90,36 +111,6 @@ app.get('/logout', (req, res) => {
     req.session.destroy(() => {
         res.redirect('/');
     });
-});
-
-
-// Auth middleware
-function isAuthenticated(req, res, next) {
-    if (req.session.user) { return next(); }
-    res.redirect('/login');
-}
-
-function isAdmin(req, res, next) {
-    if (req.session.user && req.session.user.role === 'admin') return next();
-    res.status(403).send('Access denied');
-}
-
-// Routes //
-//testing
-
-// Home route 
-app.get('/', (req, res) => {
-    res.render('index', { user: req.session.user });
-});
-
-// Register
-app.get('/register', (req, res) => {
-    res.render('register', { message: req.flash('message') });
-});
-
-// Login
-app.get('/login', (req, res) => {
-    res.render('login', { message: req.flash('message') });
 });
 
 
