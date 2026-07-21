@@ -119,7 +119,16 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/dashboard', isAuthenticated, (req, res) => {
-    res.render('dashboard', { user: req.session.user });
+    const sql = `
+        SELECT s.*, u.username AS instructor_username
+        FROM skills s
+        LEFT JOIN users u ON s.instructor_id = u.user_id
+        ORDER BY s.created_at DESC
+    `;
+    db.query(sql, (err, courses) => {
+        if (err) throw err;
+        res.render('dashboard', { user: req.session.user, courses });
+    });
 });
 
 app.post('/dashboard', isAuthenticated, (req, res) => {
