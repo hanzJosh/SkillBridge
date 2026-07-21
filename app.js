@@ -118,7 +118,20 @@ app.get('/logout', (req, res) => {
     });
 });
 
+app.get('/dashboard', isAuthenticated, (req, res) => {
+    res.render('dashboard', { user: req.session.user });
+});
 
+app.post('/dashboard', isAuthenticated, (req, res) => {
+    const { username, email } = req.body;
+    const sql = 'UPDATE users SET username = ?, email = ? WHERE user_id = ?';
+    db.query(sql, [username, email, req.session.user.id], (err) => {
+        if (err) throw err;
+        req.session.user.username = username;
+        req.session.user.email = email;
+        res.redirect('/dashboard');
+    });
+});
 
 // View my own listings
 app.get('/skills', isAuthenticated, isInstructor, (req, res) => {
