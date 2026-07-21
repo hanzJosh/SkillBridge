@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - SkillBridge</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <section class="form-section">
+    <h1>Log In</h1>
+    <% if (message.length > 0) { %>
+      <div class="flash"><%= message %></div>
+    <% } %>
+
+    <form action="/login" method="POST" class="form">
+      <label for="username">Username</label>
+      <input type="text" name="username" id="username" required>
+
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" required>
+
+      <button type="submit" class="btn">Log In</button>
+    </form>
+
+    <p>Don’t have an account? <a href="/register">Register</a></p>
+  </section>
+</body>
+</html>

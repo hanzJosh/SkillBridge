@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - SkillBridge</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <section class="form-section">
+    <h1>Create an Account</h1>
+    <% if (message.length > 0) { %>
+      <div class="flash"><%= message %></div>
+    <% } %>
+
+    <form action="/register" method="POST" class="form">
+      <label for="username">Username</label>
+      <input type="text" name="username" id="username" required>
+
+      <label for="email">Email</label>
+      <input type="email" name="email" id="email" required>
+
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" required>
+
+      <label for="role">Role</label>
+      <select name="role" id="role" required>
+        <option value="learner">Learner</option>
+        <option value="instructor">Instructor</option>
+        <option value="admin">Admin</option>
+      </select>
+
+      <button type="submit" class="btn">Register</button>
+    </form>
+
+    <p>Already have an account? <a href="/login">Log in</a></p>
+  </section>
+</body>
+</html>
