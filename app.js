@@ -46,6 +46,11 @@ function isAdmin(req, res, next) {
     res.status(403).send('Access denied');
 }
 
+function isInstructor(req, res, next) {
+    if (req.session.user && req.session.user.role === 'instructor') return next();
+    res.status(403).send('Instructor access only');
+}
+
 // Routes //
 
 // Home route 
