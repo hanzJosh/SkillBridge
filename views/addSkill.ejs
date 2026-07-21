@@ -1,0 +1,36 @@
+<%- include('partials/navbar', { user: user }) %>
+
+<h1>Create Skill Listing</h1>
+
+<form action="/skills/add" method="POST">
+    <label>Title</label>
+    <input type="text" name="title" required>
+
+    <label>Description</label>
+    <textarea name="description" required></textarea>
+
+    <label>Category</label>
+    <input type="text" name="category" required>
+
+    <label>Level</label>
+    <select name="level" required>
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="advanced">Advanced</option>
+    </select>
+
+    <label>Price per hour ($)</label>
+    <input type="number" name="price" min="0" step="0.01" required>
+
+    <label>Lesson duration (hours)</label>
+    <input type="number" name="duration" min="1" required>
+
+    <label>Mode</label>
+    <select name="mode" required>
+        <option value="online">Online</option>
+        <option value="offline">Offline</option>
+        <option value="hybrid">Hybrid</option>
+    </select>
+
+    <button type="submit">Create Listing</button>
+</form>
