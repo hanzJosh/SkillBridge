@@ -103,7 +103,7 @@ app.post('/login', (req, res) => {
         const match = await bcrypt.compare(password, user.password);
         if (match) {
             req.session.user = { id: user.user_id, username: user.username, role: user.role };
-            res.redirect('/');
+            res.redirect('/dashboard');
         } else {
             req.flash('message', 'Invalid credentials');
             res.redirect('/login');
@@ -118,12 +118,7 @@ app.get('/logout', (req, res) => {
     });
 });
 
-function isInstructor(req, res, next) {
-    if (req.session.user && req.session.user.role === 'instructor') {
-        return next();
-    }
-    res.status(403).send('Instructor access only');
-}
+
 
 // View my own listings
 app.get('/skills', isAuthenticated, isInstructor, (req, res) => {
