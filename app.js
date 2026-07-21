@@ -150,17 +150,17 @@ app.get('/skills/add', isAuthenticated, isInstructor, (req, res) => {
 
 // Create a listing
 app.post('/skills/add', isAuthenticated, isInstructor, (req, res) => {
-    const { title, description, category, level, price, duration, mode } = req.body;
+    const { title, description, category, level, duration, mode } = req.body;
 
     const sql = `
         INSERT INTO skills
-        (instructor_id, title, description, category, level, price, duration, mode)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (instructor_id, title, description, category, level, duration, mode)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
         sql,
-        [req.session.user.id, title, description, category, level, price, duration, mode],
+        [req.session.user.id, title, description, category, level, duration, mode],
         (err) => {
             if (err) throw err;
             res.redirect('/skills');
@@ -182,12 +182,12 @@ app.get('/skills/:id/edit', isAuthenticated, isInstructor, (req, res) => {
 
 // Save an edited listing — only for the listing owner
 app.post('/skills/:id/edit', isAuthenticated, isInstructor, (req, res) => {
-    const { title, description, category, level, price, duration, mode } = req.body;
+    const { title, description, category, level, duration, mode } = req.body;
 
     const sql = `
         UPDATE skills
         SET title = ?, description = ?, category = ?, level = ?,
-            price = ?, duration = ?, mode = ?
+             duration = ?, mode = ?
         WHERE skill_id = ? AND instructor_id = ?
     `;
 
