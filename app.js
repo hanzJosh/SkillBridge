@@ -113,6 +113,91 @@ app.get('/logout', (req, res) => {
     });
 });
 
+function isInstructor(req, res, next) {
+    if (req.session.user && req.session.user.role === 'instructor') {
+        return next();
+    }
+    res.status(403).send('Instructor access only');
+}
+
+// View my own listings
+app.get('/skills', isAuthenticated, isInstructor, (req, res) => {
+    const sql = 'SELECT * FROM skills WHERE instructor_id = ? ORDER BY created_at DESC';
+
+    db.query(sql, [req.session.user.id], (err, skills) => {
+        if (err) throw err;
+        res.render('skills', { user: req.session.user, skills });
+    });
+});
+
+// Show create-listing form
+app.get('/skills/add', isAuthenticated, isInstructor, (req, res) => {
+    res.render('addSkill', { user: req.session.user });
+});
+
+// Create a listing
+app.post('/skills/add', isAuthenticated, isInstructor, (req, res) => {
+    const { title, description, category, level, price, duration, mode } = req.body;
+
+    const sql = `
+        INSERT INTO skills
+        (instructor_id, title, description, category, level, price, duration, mode)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        sql,
+        [req.session.user.id, title, description, category, level, price, duration, mode],
+        (err) => {
+            if (err) throw err;
+            res.redirect('/skills');
+        }
+    );
+});
+
+// Show edit form — only for the listing owner
+app.get('/skills/:id/edit', isAuthenticated, isInstructor, (req, res) => {
+    const sql = 'SELECT * FROM skills WHERE skill_id = ? AND instructor_id = ?';
+
+    db.query(sql, [req.params.id, req.session.user.id], (err, results) => {
+        if (err) throw err;
+        if (results.length === 0) return res.status(404).send('Listing not found');
+
+        res.render('editSkill', { user: req.session.user, skill: results[0] });
+    });
+});
+
+// Save an edited listing — only for the listing owner
+app.post('/skills/:id/edit', isAuthenticated, isInstructor, (req, res) => {
+    const { title, description, category, level, price, duration, mode } = req.body;
+
+    const sql = `
+        UPDATE skills
+        SET title = ?, description = ?, category = ?, level = ?,
+            price = ?, duration = ?, mode = ?
+        WHERE skill_id = ? AND instructor_id = ?
+    `;
+
+    db.query(
+        sql,
+        [title, description, category, level, price, duration, mode,
+        req.params.id, req.session.user.id],
+        (err) => {
+            if (err) throw err;
+            res.redirect('/skills');
+        }
+    );
+});
+
+// Delete a listing — only for the listing owner
+app.post('/skills/:id/delete', isAuthenticated, isInstructor, (req, res) => {
+    const sql = 'DELETE FROM skills WHERE skill_id = ? AND instructor_id = ?';
+
+    db.query(sql, [req.params.id, req.session.user.id], (err) => {
+        if (err) throw err;
+        res.redirect('/skills');
+    });
+});
 
 
 // start server
