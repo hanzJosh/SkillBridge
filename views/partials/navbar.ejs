@@ -3,16 +3,23 @@
 
   <% if (typeof user !== 'undefined' && user) { %>
     <a href="/dashboard">Dashboard</a>
-    <a href="/skills">Skills</a>
+
+    <% if (user.role === 'instructor') { %>
+      <a href="/skills">My Listings</a>
+    <% } %>
+
     <a href="/bookings">Bookings</a>
     <a href="/profile">Profile</a>
+
     <% if (user.role === 'admin') { %>
       <a href="/admin">Admin</a>
     <% } %>
+
     <a href="/logout">Logout</a>
   <% } else { %>
     <a href="/login">Login</a>
     <a href="/register">Register</a>
   <% } %>
 </nav>
+
 <hr>
