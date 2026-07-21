@@ -2,37 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Register - SkillBridge</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <section class="form-section">
-    <h1>Create an Account</h1>
-    <% if (message.length > 0) { %>
-      <div class="flash"><%= message %></div>
-    <% } %>
+  <div class="auth-wrap">
+    <div>
+      <a href="/" class="back-link">&larr; SkillBridge</a>
 
-    <form action="/register" method="POST" class="form">
-      <label for="username">Username</label>
-      <input type="text" name="username" id="username" required>
+      <section class="form-section register">
+        <span class="eyebrow">Get started</span>
+        <h1>Create an Account</h1>
+        <p class="sub">Join to teach a skill or learn one.</p>
 
-      <label for="email">Email</label>
-      <input type="email" name="email" id="email" required>
+        <% if (message.length > 0) { %>
+          <div class="flash" role="alert"><%= message %></div>
+        <% } %>
 
-      <label for="password">Password</label>
-      <input type="password" name="password" id="password" required>
+        <form action="/register" method="POST" class="form" id="registerForm" novalidate>
+          <div class="field">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" autocomplete="username" autofocus required>
+          </div>
 
-      <label for="role">Role</label>
-      <select name="role" id="role" required>
-        <option value="learner">Learner</option>
-        <option value="instructor">Instructor</option>
-        <option value="admin">Admin</option>
-      </select>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" autocomplete="email" required>
+          </div>
 
-      <button type="submit" class="btn">Register</button>
-    </form>
+          <div class="field password-field">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" autocomplete="new-password" minlength="8" required>
+            <button type="button" class="toggle-pw" data-target="password">Show</button>
+            <span class="hint">At least 8 characters.</span>
+          </div>
 
-    <p>Already have an account? <a href="/login">Log in</a></p>
-  </section>
+          <div class="field password-field">
+            <label for="confirm-password">Confirm password</label>
+            <input type="password" name="confirm-password" id="confirm-password" autocomplete="new-password" minlength="8" required>
+            <button type="button" class="toggle-pw" data-target="confirm-password">Show</button>
+            <span class="hint" id="matchHint"></span>
+          </div>
+
+          <div class="field">
+            <label>I'm here to</label>
+            <div class="role-picker">
+              <div class="role-option learn">
+                <input type="radio" name="role" id="role-learner" value="learner" checked>
+                <label for="role-learner">Learn</label>
+              </div>
+              <div class="role-option teach">
+                <input type="radio" name="role" id="role-instructor" value="instructor">
+                <label for="role-instructor">Teach</label>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-register btn-block">Register</button>
+        </form>
+
+        <p class="foot">Already have an account? <a href="/login">Log in</a></p>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.toggle-pw').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var input = document.getElementById(btn.dataset.target);
+        var showing = input.type === 'text';
+        input.type = showing ? 'password' : 'text';
+        btn.textContent = showing ? 'Show' : 'Hide';
+      });
+    });
+
+    var form = document.getElementById('registerForm');
+    var pw = document.getElementById('password');
+    var confirm = document.getElementById('confirm-password');
+    var matchHint = document.getElementById('matchHint');
+
+    function checkMatch() {
+      if (!confirm.value) { matchHint.textContent = ''; return true; }
+      var ok = pw.value === confirm.value;
+      matchHint.textContent = ok ? 'Passwords match.' : 'Passwords don\'t match.';
+      matchHint.style.color = ok ? 'var(--teach)' : 'var(--learn)';
+      return ok;
+    }
+
+    confirm.addEventListener('input', checkMatch);
+    pw.addEventListener('input', checkMatch);
+
+    form.addEventListener('submit', function (e) {
+      if (!checkMatch()) {
+        e.preventDefault();
+        confirm.focus();
+      }
+    });
+  </script>
 </body>
 </html>
