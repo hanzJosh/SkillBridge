@@ -48,7 +48,7 @@
               <td>
                 <a href="/skills/<%= skill.skill_id %>/edit"><button>Edit</button></a>
                 <form action="/skills/<%= skill.skill_id %>/delete" method="POST" style="display:inline;">
-                  <button type="submit" onclick="return confirm('Delete this course?')">Delete</button>
+                  <button type="submit" onclick="return confirm('Delete this skill course?')">Delete</button>
                 </form>
               </td>
             <% } else if (user.role === 'instructor' || user.role === 'admin') { %>
