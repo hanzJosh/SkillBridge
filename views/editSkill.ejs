@@ -1,1 +1,36 @@
+<%- include('partials/navbar', { user: user }) %>
 
+<h1>Edit Skill Listing</h1>
+
+<form action="/skills/<%= skill.skill_id %>/edit" method="POST">
+    <label>Title</label>
+    <input type="text" name="title" value="<%= skill.title %>" required>
+
+    <label>Description</label>
+    <textarea name="description" required><%= skill.description %></textarea>
+
+    <label>Category</label>
+    <input type="text" name="category" value="<%= skill.category %>" required>
+
+    <label>Level</label>
+    <select name="level" required>
+        <option value="beginner" <%= skill.level === 'beginner' ? 'selected' : '' %>>Beginner</option>
+        <option value="intermediate" <%= skill.level === 'intermediate' ? 'selected' : '' %>>Intermediate</option>
+        <option value="advanced" <%= skill.level === 'advanced' ? 'selected' : '' %>>Advanced</option>
+    </select>
+
+    <label>Price per hour ($)</label>
+    <input type="number" name="price" value="<%= skill.price %>" min="0" step="0.01" required>
+
+    <label>Lesson duration (hours)</label>
+    <input type="number" name="duration" value="<%= skill.duration %>" min="1" required>
+
+    <label>Mode</label>
+    <select name="mode" required>
+        <option value="online" <%= skill.mode === 'online' ? 'selected' : '' %>>Online</option>
+        <option value="offline" <%= skill.mode === 'offline' ? 'selected' : '' %>>Offline</option>
+        <option value="hybrid" <%= skill.mode === 'hybrid' ? 'selected' : '' %>>Hybrid</option>
+    </select>
+
+    <button type="submit">Save Changes</button>
+</form>
