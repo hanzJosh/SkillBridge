@@ -1,1 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - SkillBridge</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
 
+  <%- include('partials/navbar', { user: user }) %>
+
+  <h1>Dashboard</h1>
+
+  <% if (user.role === 'instructor' || user.role === 'admin') { %>
+    <a href="/skills/add"><button>+ Add New Course</button></a>
+  <% } %>
+
+  <h2>All Courses</h2>
+
+  <% if (courses.length === 0) { %>
+    <p>No courses available yet.</p>
+  <% } else { %>
+    <table border="1" cellpadding="8">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Level</th>
+          <th>Price</th>
+          <th>Duration</th>
+          <th>Mode</th>
+          <th>Instructor</th>
+          <% if (user.role === 'instructor' || user.role === 'admin') { %>
+            <th>Actions</th>
+          <% } %>
+        </tr>
+      </thead>
+      <tbody>
+        <% courses.forEach(course => { %>
+          <tr>
+            <td><%= course.title %></td>
+            <td><%= course.category %></td>
+            <td><%= course.level %></td>
+            <td>$<%= course.price %></td>
+            <td><%= course.duration %> hr</td>
+            <td><%= course.mode %></td>
+            <td><%= course.instructor_username || course.instructor_id %></td>
+
+            <% if (user.role === 'admin' || (user.role === 'instructor' && course.instructor_id === user.id)) { %>
+              <td>
+                <a href="/skills/<%= course.skill_id %>/edit"><button>Edit</button></a>
+                <form action="/skills/<%= course.skill_id %>/delete" method="POST" style="display:inline;">
+                  <button type="submit" onclick="return confirm('Delete this course?')">Delete</button>
+                </form>
+              </td>
+            <% } else if (user.role === 'instructor' || user.role === 'admin') { %>
+              <td>&mdash;</td>
+            <% } %>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+
+</body>
+</html>
