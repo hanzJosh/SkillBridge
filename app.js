@@ -43,6 +43,7 @@ function isAdmin(req, res, next) {
 }
 
 // Routes //
+//testing
 
 // Home
 app.get('/', (req, res) => {
