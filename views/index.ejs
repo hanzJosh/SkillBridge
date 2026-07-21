@@ -21,14 +21,17 @@
     <p class="sub">SkillBridge connects students who can teach with students who want to learn — no fees, just a fair
       swap of time and knowledge.</p>
 
-    <% if (user) { %>
-      <div class="user-info">
-        <p>Welcome, <strong>
-            <%= user.username %>
-          </strong> (<%= user.role %>)</p>
-        <a href="/logout" class="btn btn-logout">Logout</a>
-      </div>
-      <% } else { %>
+<% if (user) { %>
+  <div class="user-info">
+    <p>Welcome, <strong><%= user.username %></strong> (<%= user.role %>)</p>
+
+    <% if (user.role === 'instructor') { %>
+      <a href="/skills" class="btn btn-register">My Listings</a>
+    <% } %>
+
+    <a href="/logout" class="btn btn-login">Logout</a>
+  </div>
+<% } else { %>
         <div class="cta-row">
           <a href="/register" class="btn btn-register">Register</a>
           <a href="/login" class="btn btn-login">Log in</a>
