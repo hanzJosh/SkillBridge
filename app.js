@@ -20,13 +20,10 @@ app.use(flash());
 
 // Database
 const db = mysql.createConnection({
-    host: 'c237-hannah-mysql.mysql.database.azure.com',
-    user: 'c237_016',
-    password: 'c237016@2026!',
-    database: 'C237_016_t2regapp',
-    ssl: {
-        rejectUnauthorized: false
-    }
+    host: 'localhost',
+    user: 'root',
+    password: 'RP738964$',
+    database: 'c237_skillbridge'
 });
 
 db.connect((err) => {
