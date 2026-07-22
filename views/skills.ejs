@@ -1,26 +1,46 @@
-<%- include('partials/navbar', { user: user }) %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Skill Listings - SkillBridge</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
 
-<h1>My Skill Listings</h1>
-<a href="/skills/add">Create New Skill Course</a>
+  <%- include('partials/navbar', { user: user }) %>
 
-<% if (skills.length === 0) { %>
-    <p>You have not created any skill courses yet.</p>
-<% } %>
-
-<% skills.forEach(skill => { %>
-    <div>
-        <h2><%= skill.title %></h2>
-        <p><strong>Category:</strong> <%= skill.category %></p>
-        <p><strong>Level:</strong> <%= skill.level %></p>
-        <p><%= skill.description %></p>
-
-        <a href="/skills/<%= skill.skill_id %>/edit">Edit</a>
-
-        <form action="/skills/<%= skill.skill_id %>/delete" method="POST">
-            <button type="submit" onclick="return confirm('Delete this listing?')">
-                Delete
-            </button>
-        </form>
+  <main class="listings-wrap">
+    <div class="listings-header">
+      <h1>My Skill Listings</h1>
+      <a href="/skills/add" class="btn btn-register">+ Create New Skill Course</a>
     </div>
-    <hr>
-<% }) %>
+
+    <% if (skills.length === 0) { %>
+      <div class="empty-state">
+        <p>You have not created any skill courses yet.</p>
+      </div>
+    <% } else { %>
+      <div class="listings-grid">
+        <% skills.forEach(skill => { %>
+          <div class="listing-card">
+            <div class="listing-card-top">
+              <h2><%= skill.title %></h2>
+              <span class="badge badge-<%= skill.level %>"><%= skill.level %></span>
+            </div>
+            <p class="listing-meta"><%= skill.category %></p>
+            <p class="listing-desc"><%= skill.description %></p>
+
+            <div class="listing-actions">
+              <a href="/skills/<%= skill.skill_id %>/edit" class="action-btn">Edit</a>
+              <form action="/skills/<%= skill.skill_id %>/delete" method="POST" class="inline-form">
+                <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('Delete this listing?')">Delete</button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
+
+</body>
+</html>

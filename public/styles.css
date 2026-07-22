@@ -305,3 +305,83 @@ body {
   .dashboard-header { flex-direction: column; align-items: flex-start; }
   .skills-table { display: block; overflow-x: auto; white-space: nowrap; }
 }
+
+/* ---------- Skills ---------- */
+.listings-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.listings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.listings-header h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.listings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.listing-card {
+  background: var(--panel, #fff);
+  border-radius: 14px;
+  padding: 24px;
+  border-top: 4px solid var(--teach, #0F8B8D);
+  box-shadow: 0 8px 24px rgba(23, 35, 61, 0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+.listing-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.listing-card-top h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.listing-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft, #4C5A72);
+  margin: 0 0 12px;
+}
+
+.listing-desc {
+  color: var(--ink-soft, #4C5A72);
+  font-size: 0.92rem;
+  margin: 0 0 20px;
+  flex-grow: 1;
+}
+
+.listing-actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 480px) {
+  .listings-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
