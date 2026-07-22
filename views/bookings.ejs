@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bookings - SkillBridge</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .badge-pending   { background: #fef3c7; color: #92400e; }
+    .badge-accepted  { background: #d1fae5; color: #065f46; }
+    .badge-rejected  { background: #fee2e2; color: #991b1b; }
+    .badge-cancelled { background: #e5e7eb; color: #374151; }
+    .badge-completed { background: #dbeafe; color: #1e40af; }
+    .flash {
+      background: #d1fae5; color: #065f46;
+      padding: 10px 16px; border-radius: 8px; margin-bottom: 16px;
+    }
+    .booking-notes { font-size: 0.85em; color: #6b7280; }
+    .section-gap { margin-top: 40px; }
+  </style>
+</head>
+<body>
+
+  <%- include('partials/navbar', { user: user }) %>
+
+  <main class="dashboard-wrap">
+    <div class="dashboard-header">
+      <h1>
+        <% if (user.role === 'instructor') { %>Incoming Booking Requests<% } else if (user.role === 'admin') { %>All Bookings<% } else { %>My Bookings<% } %>
+      </h1>
+      <% if (user.role === 'learner') { %>
+        <a href="/bookings/new" class="btn btn-register">+ Request a Lesson</a>
+      <% } %>
+    </div>
+
+    <% if (message && message.length > 0) { %>
+      <div class="flash"><%= message %></div>
+    <% } %>
+
+    <!-- ACTIVE BOOKINGS -->
+    <section class="dashboard-section">
+      <h2>Active</h2>
+
+      <% if (active.length === 0) { %>
+        <div class="empty-state">
+          <p>No active bookings.</p>
+        </div>
+      <% } else { %>
+        <div class="table-card">
+          <table class="skills-table">
+            <thead>
+              <tr>
+                <th>Skill Course</th>
+                <% if (user.role !== 'learner') { %><th>Learner</th><% } %>
+                <% if (user.role !== 'instructor') { %><th>Instructor</th><% } %>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% active.forEach(b => { %>
+                <tr>
+                  <td class="skill-title">
+                    <%= b.skill_title %>
+                    <% if (b.notes) { %><div class="booking-notes">Note: <%= b.notes %></div><% } %>
+                  </td>
+                  <% if (user.role !== 'learner') { %><td><%= b.learner_username %></td><% } %>
+                  <% if (user.role !== 'instructor') { %><td><%= b.instructor_username %></td><% } %>
+                  <td><%= new Date(b.booking_date).toLocaleDateString('en-SG') %></td>
+                  <td><%= b.booking_time.slice(0, 5) %></td>
+                  <td><span class="badge badge-<%= b.status %>"><%= b.status %></span></td>
+                  <td class="actions-cell">
+
+                    <% if (user.role === 'instructor') { %>
+                      <% if (b.status === 'pending') { %>
+                        <form action="/bookings/<%= b.booking_id %>/accept" method="POST" class="inline-form">
+                          <button type="submit" class="action-btn">Accept</button>
+                        </form>
+                        <form action="/bookings/<%= b.booking_id %>/reject" method="POST" class="inline-form">
+                          <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('Reject this booking request?')">Reject</button>
+                        </form>
+                      <% } else if (b.status === 'accepted') { %>
+                        <form action="/bookings/<%= b.booking_id %>/complete" method="POST" class="inline-form">
+                          <button type="submit" class="action-btn">Mark Completed</button>
+                        </form>
+                        <form action="/bookings/<%= b.booking_id %>/cancel" method="POST" class="inline-form">
+                          <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('Cancel this booking?')">Cancel</button>
+                        </form>
+                      <% } %>
+                    <% } else { %>
+                      <form action="/bookings/<%= b.booking_id %>/cancel" method="POST" class="inline-form">
+                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('Cancel this booking?')">Cancel</button>
+                      </form>
+                    <% } %>
+
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </section>
+
+    <!-- BOOKING HISTORY -->
+    <section class="dashboard-section section-gap">
+      <h2>Booking History</h2>
+
+      <% if (history.length === 0) { %>
+        <div class="empty-state">
+          <p>No past bookings yet.</p>
+        </div>
+      <% } else { %>
+        <div class="table-card">
+          <table class="skills-table">
+            <thead>
+              <tr>
+                <th>Skill Course</th>
+                <% if (user.role !== 'learner') { %><th>Learner</th><% } %>
+                <% if (user.role !== 'instructor') { %><th>Instructor</th><% } %>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% history.forEach(b => { %>
+                <tr>
+                  <td class="skill-title"><%= b.skill_title %></td>
+                  <% if (user.role !== 'learner') { %><td><%= b.learner_username %></td><% } %>
+                  <% if (user.role !== 'instructor') { %><td><%= b.instructor_username %></td><% } %>
+                  <td><%= new Date(b.booking_date).toLocaleDateString('en-SG') %></td>
+                  <td><%= b.booking_time.slice(0, 5) %></td>
+                  <td><span class="badge badge-<%= b.status %>"><%= b.status %></span></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </section>
+  </main>
+
+</body>
+</html>
