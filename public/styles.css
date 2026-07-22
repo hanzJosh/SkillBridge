@@ -1,164 +1,101 @@
-:root {
-  --bg: #F1F3F6;
-  --ink: #17233D;
-  --ink-soft: #4C5A72;
-  --teach: #0F8B8D;
-  --learn: #FF6B5B;
-  --gold: #D4A24C;
-  --panel: #FFFFFF;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: 'Inter', sans-serif;
-  line-height: 1.5;
+  font-family: Arial, sans-serif;
+  background: #F5F6FA;
+  color: #222;
+  margin: 0;
 }
 
-.eyebrow {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-h1, h2 {
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-/* ---------- Hero ---------- */
 .hero {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 64px 24px 32px;
+  max-width: 500px;
+  margin: 100px auto;
   text-align: center;
+  padding: 0 20px;
 }
 
 .hero h1 {
-  font-size: clamp(2.2rem, 5vw, 3.4rem);
-  font-weight: 700;
-  line-height: 1.1;
-  margin: 16px 0;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
 }
 
-.hero p.sub {
-  color: var(--ink-soft);
-  font-size: 1.1rem;
-  max-width: 520px;
-  margin: 0 auto 32px;
+.hero p {
+  color: #555;
+  margin-bottom: 30px;
 }
 
-/* ---------- Bridge illustration ---------- */
-.bridge-wrap {
-  max-width: 720px;
-  margin: 0 auto 40px;
-}
-
-.bridge-wrap svg { width: 100%; height: auto; display: block; }
-
-/* ---------- CTA buttons ---------- */
 .cta-row {
   display: flex;
-  gap: 16px;
   justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
+  gap: 12px;
 }
 
-.btn {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
+.btn-primary,
+.btn-secondary {
   font-size: 1rem;
-  padding: 14px 32px;
-  border-radius: 8px;
-  text-decoration: none;
-  display: inline-block;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  padding: 10px 24px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
 }
 
-.btn:hover { transform: translateY(-2px); }
-.btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-
-.btn-register {
-  background: var(--ink);
+.btn-primary {
+  background: #222;
   color: #fff;
 }
-.btn-register:hover { box-shadow: 0 8px 20px rgba(23,35,61,0.25); }
 
-.btn-login {
-  background: transparent;
-  color: var(--ink);
-  border: 2px solid var(--ink);
+.btn-secondary {
+  background: #fff;
+  color: #222;
+  border: 1px solid #222;
 }
-.btn-login:hover { box-shadow: 0 8px 20px rgba(23,35,61,0.12); }
-
-/* ---------- Two sides ---------- */
-.sides {
-  max-width: 960px;
-  margin: 24px auto 0;
-  padding: 0 24px 48px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+/* Create listing form */
+.listing-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 48px 20px;
 }
 
-.side-card {
-  background: var(--panel);
-  border-radius: 14px;
-  padding: 28px;
+.listing-form-box {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
   border-top: 4px solid var(--teach);
 }
 
-.side-card.learn { border-top-color: var(--learn); }
-
-.side-card .eyebrow.teach { color: var(--teach); }
-.side-card .eyebrow.learn { color: var(--learn); }
-
-.side-card h2 { font-size: 1.3rem; margin: 8px 0 10px; }
-.side-card p { color: var(--ink-soft); font-size: 0.95rem; }
-
-/* ---------- How it works ---------- */
-.how {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 16px 24px 80px;
+.listing-form-box h1 {
+  margin-bottom: 8px;
 }
 
-.how h2 {
-  text-align: center;
-  font-size: 1.6rem;
-  margin-bottom: 32px;
+.form-description {
+  color: var(--ink-soft);
+  margin-bottom: 24px;
 }
 
-.steps {
+.listing-form {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 10px;
 }
 
-.step {
-  display: flex;
-  gap: 20px;
-  padding: 18px 0;
-  border-bottom: 1px solid #DCE1E8;
+.listing-form label {
+  font-weight: 600;
+  margin-top: 8px;
 }
 
-.step:last-child { border-bottom: none; }
-
-.step .num {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.85rem;
-  color: var(--gold);
-  padding-top: 2px;
-  min-width: 32px;
+.listing-form input,
+.listing-form textarea,
+.listing-form select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #DCE1E8;
+  border-radius: 6px;
+  font: inherit;
 }
 
-.step .txt strong { display: block; font-size: 1rem; margin-bottom: 2px; }
-.step .txt span { color: var(--ink-soft); font-size: 0.9rem; }
+.listing-form textarea {
+  resize: vertical;
+}
 
+<<<<<<< HEAD
 @media (max-width: 640px) {
   .sides { grid-template-columns: 1fr; }
 }
@@ -351,3 +288,10 @@ h1, h2 {
   text-decoration: none;
 }
 .form-section .foot a:hover { text-decoration: underline; }
+=======
+.listing-form button {
+  margin-top: 16px;
+  border: none;
+  cursor: pointer;
+}
+>>>>>>> f9d01be3514ae69ea21e2d92fd22f7edf45d816e

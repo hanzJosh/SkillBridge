@@ -1,36 +1,56 @@
-<%- include('partials/navbar', { user: user }) %>
+<!DOCTYPE html>
+<html lang="en">
 
-<h1>Create Skill Listing</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Listing | SkillBridge</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
 
-<form action="/skills/add" method="POST">
-    <label>Title</label>
-    <input type="text" name="title" required>
+<body>
+    <%- include('partials/navbar', { user: user }) %>
 
-    <label>Description</label>
-    <textarea name="description" required></textarea>
+        <main class="listing-page">
+            <section class="listing-form-box">
+                <h1>Create New Skill Course</h1>
+                <p class="form-description">Add the skill that you would like to teach.</p>
 
-    <label>Category</label>
-    <input type="text" name="category" required>
+                <form action="/skills/add" method="POST" class="listing-form">
 
-    <label>Level</label>
-    <select name="level" required>
-        <option value="beginner">Beginner</option>
-        <option value="intermediate">Intermediate</option>
-        <option value="advanced">Advanced</option>
-    </select>
+                    <label for="title">Skill title</label>
+                    <input type="text" id="title" name="title" placeholder="Example: Beginner Guitar Lessons" required>
 
-    <label>Price per hour ($)</label>
-    <input type="number" name="price" min="0" step="0.01" required>
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="5"
+                        placeholder="Describe what students will learn." required></textarea>
 
-    <label>Lesson duration (hours)</label>
-    <input type="number" name="duration" min="1" required>
+                    <label for="category">Category</label>
+                    <input type="text" id="category" name="category" placeholder="Example: Music" required>
 
-    <label>Mode</label>
-    <select name="mode" required>
-        <option value="online">Online</option>
-        <option value="offline">Offline</option>
-        <option value="hybrid">Hybrid</option>
-    </select>
+                    <label for="level">Skill level</label>
+                    <select id="level" name="level" required>
+                        <option value="">Choose a level</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
 
-    <button type="submit">Create Listing</button>
-</form>
+                    <label for="duration">Lesson duration (hours)</label>
+                    <input type="number" id="duration" name="duration" min="1" placeholder="1" required>
+
+                    <label for="mode">Lesson mode</label>
+                    <select id="mode" name="mode" required>
+                        <option value="">Choose a mode</option>
+                        <option value="online">Online</option>
+                        <option value="offline">In person</option>
+                        <option value="hybrid">Both online and in person</option>
+                    </select>
+
+                    <button type="submit" class="btn btn-register">Create Skill Course</button>
+                </form>
+            </section>
+        </main>
+</body>
+
+</html>
