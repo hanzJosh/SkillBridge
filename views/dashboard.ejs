@@ -12,13 +12,13 @@
   <h1>Dashboard</h1>
 
   <% if (user.role === 'instructor' || user.role === 'admin') { %>
-    <a href="/skills/add"><button>+ Add New Course</button></a>
+    <a href="/skills/add"><button>+ Add New Skill Course</button></a>
   <% } %>
 
-  <h2>All Courses</h2>
+  <h2>All Skill Courses</h2>
 
   <% if (skills.length === 0) { %>
-    <p>No courses available yet.</p>
+    <p>No skill courses available yet.</p>
   <% } else { %>
     <table border="1" cellpadding="8">
       <thead>

@@ -13,7 +13,7 @@
 
         <main class="listing-page">
             <section class="listing-form-box">
-                <h1>Create New Listing</h1>
+                <h1>Create New Skill Course</h1>
                 <p class="form-description">Add the skill that you would like to teach.</p>
 
                 <form action="/skills/add" method="POST" class="listing-form">
@@ -36,9 +36,6 @@
                         <option value="advanced">Advanced</option>
                     </select>
 
-                    <label for="price">Price per hour ($)</label>
-                    <input type="number" id="price" name="price" min="0" step="0.01" placeholder="20.00" required>
-
                     <label for="duration">Lesson duration (hours)</label>
                     <input type="number" id="duration" name="duration" min="1" placeholder="1" required>
 
@@ -50,7 +47,7 @@
                         <option value="hybrid">Both online and in person</option>
                     </select>
 
-                    <button type="submit" class="btn btn-register">Create Listing</button>
+                    <button type="submit" class="btn btn-register">Create Skill Course</button>
                 </form>
             </section>
         </main>
