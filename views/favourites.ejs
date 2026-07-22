@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Favourites - SkillBridge</title>
+  <link rel="stylesheet" href="/styles.css">
+
+</head>
+<body>
+
+  <%- include('partials/navbar', { user: user }) %>
+
+  <main class="dashboard-wrap">
+    <div class="dashboard-header">
+      <h1>My Favourites</h1>
+    </div>
+
+    <% if (message.length > 0) { %>
+      <div class="flash" role="alert"><%= message %></div>
+    <% } %>
+
+    <section class="dashboard-section">
+      <% if (skills.length === 0) { %>
+        <div class="empty-state">
+          <p>You haven't saved any courses yet. Head to the <a href="/dashboard">dashboard</a> and tap &#9734; Save on anything you want to come back to.</p>
+        </div>
+      <% } else { %>
+        <div class="table-card">
+          <table class="skills-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Level</th>
+                <th>Duration</th>
+                <th>Mode</th>
+                <th>Instructor</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% skills.forEach(skill => { %>
+                <tr>
+                  <td class="skill-title"><%= skill.title %></td>
+                  <td><%= skill.category %></td>
+                  <td><span class="badge badge-<%= skill.level %>"><%= skill.level %></span></td>
+                  <td><%= skill.duration %> hr</td>
+                  <td><%= skill.mode %></td>
+                  <td><%= skill.instructor_username || skill.instructor_id %></td>
+                  <td class="actions-cell">
+                    <a href="/skills/<%= skill.skill_id %>/review" class="action-btn">Review</a>
+                    <form action="/skills/<%= skill.skill_id %>/favourite" method="POST" class="inline-form">
+                      <button type="submit" class="action-btn action-btn-delete">Remove</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </section>
+  </main>
+
+</body>
+</html>

@@ -49,6 +49,16 @@
                   <td><%= skill.duration %> hr</td>
                   <td><%= skill.mode %></td>
                   <td><%= skill.instructor_username || skill.instructor_id %></td>
+                  <td class="actions-cell">
+                    <form action="/skills/<%= skill.skill_id %>/favourite" method="POST" class="inline-form">
+                      <% if (favouritedIds.includes(skill.skill_id)) { %>
+                        <button type="submit" class="action-btn action-btn-fav is-favourited">&#9733; Saved</button>
+                      <% } else { %>
+                        <button type="submit" class="action-btn action-btn-fav">&#9734; Save</button>
+                      <% } %>
+                    </form>
+                    <a href="/skills/<%= skill.skill_id %>/review" class="action-btn">Review</a>
+                  </td>
 
                   <% if (user.role === 'admin' || (user.role === 'instructor' && skill.instructor_id === user.id)) { %>
                     <td class="actions-cell">
