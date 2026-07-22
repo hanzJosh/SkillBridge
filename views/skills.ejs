@@ -1,10 +1,10 @@
 <%- include('partials/navbar', { user: user }) %>
 
 <h1>My Skill Listings</h1>
-<a href="/skills/add">Create New Listing</a>
+<a href="/skills/add">Create New Skill Course</a>
 
 <% if (skills.length === 0) { %>
-    <p>You have not created any listings yet.</p>
+    <p>You have not created any skill courses yet.</p>
 <% } %>
 
 <% skills.forEach(skill => { %>
