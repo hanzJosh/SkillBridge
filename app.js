@@ -196,13 +196,13 @@ app.post('/skills/:id/edit', isAuthenticated, isInstructor, (req, res) => {
     const sql = `
         UPDATE skills
         SET title = ?, description = ?, category = ?, level = ?,
-             duration = ?, mode = ?
+            duration = ?, mode = ?
         WHERE skill_id = ? AND instructor_id = ?
     `;
 
     db.query(
         sql,
-        [title, description, category, level, price, duration, mode,
+        [title, description, category, level, duration, mode,
         req.params.id, req.session.user.id],
         (err) => {
             if (err) throw err;
