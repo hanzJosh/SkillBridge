@@ -221,6 +221,30 @@ app.post('/skills/:id/delete', isAuthenticated, isInstructor, (req, res) => {
     });
 });
 
+// View profile
+app.get('/profile', isAuthenticated, (req, res) => {
+    const sql = 'SELECT * FROM users WHERE user_id = ?';
+ 
+    db.query(sql, [req.session.user.id], (err, results) => {
+        if (err) throw err;
+        if (results.length === 0) return res.status(404).send('User not found');
+ 
+        res.render('profile', { user: req.session.user, profile: results[0] });
+    });
+});
+ 
+// Update profile
+app.post('/profile', isAuthenticated, (req, res) => {
+    const { username, email } = req.body;
+    const sql = 'UPDATE users SET username = ?, email = ? WHERE user_id = ?';
+ 
+    db.query(sql, [username, email, req.session.user.id], (err) => {
+        if (err) throw err;
+        req.session.user.username = username;
+        req.session.user.email = email;
+        res.redirect('/profile');
+    });
+});
 
 
 // start server
