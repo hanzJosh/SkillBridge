@@ -247,6 +247,207 @@ app.post('/profile', isAuthenticated, (req, res) => {
 });
 
 
+// ===================== BOOKINGS (Hans) ===================== //
+
+// View bookings page (learner = my bookings, instructor = incoming requests, admin = all)
+app.get('/bookings', isAuthenticated, (req, res) => {
+    const role = req.session.user.role;
+    let sql, params;
+
+    if (role === 'instructor') {
+        // Requests made for this instructor's skill courses
+        sql = `
+            SELECT b.*, s.title AS skill_title, s.instructor_id,
+                   u.username AS learner_username
+            FROM bookings b
+            JOIN skills s ON b.skill_id = s.skill_id
+            JOIN users u ON b.learner_id = u.user_id
+            WHERE s.instructor_id = ?
+            ORDER BY b.created_at DESC
+        `;
+        params = [req.session.user.id];
+    } else if (role === 'admin') {
+        // Admin sees every booking
+        sql = `
+            SELECT b.*, s.title AS skill_title, s.instructor_id,
+                   u.username AS learner_username,
+                   iu.username AS instructor_username
+            FROM bookings b
+            JOIN skills s ON b.skill_id = s.skill_id
+            JOIN users u ON b.learner_id = u.user_id
+            JOIN users iu ON s.instructor_id = iu.user_id
+            ORDER BY b.created_at DESC
+        `;
+        params = [];
+    } else {
+        // Learner sees their own bookings
+        sql = `
+            SELECT b.*, s.title AS skill_title, s.instructor_id,
+                   iu.username AS instructor_username
+            FROM bookings b
+            JOIN skills s ON b.skill_id = s.skill_id
+            JOIN users iu ON s.instructor_id = iu.user_id
+            WHERE b.learner_id = ?
+            ORDER BY b.created_at DESC
+        `;
+        params = [req.session.user.id];
+    }
+
+    db.query(sql, params, (err, bookings) => {
+        if (err) throw err;
+
+        // Split into active bookings vs booking history
+        const active = bookings.filter(b => b.status === 'pending' || b.status === 'accepted');
+        const history = bookings.filter(b => b.status === 'rejected' || b.status === 'cancelled' || b.status === 'completed');
+
+        res.render('bookings', {
+            user: req.session.user,
+            active,
+            history,
+            message: req.flash('message')
+        });
+    });
+});
+
+// Show "request a lesson" form
+app.get('/bookings/new', isAuthenticated, (req, res) => {
+    if (req.session.user.role === 'instructor') {
+        req.flash('message', 'Instructors cannot request lessons');
+        return res.redirect('/bookings');
+    }
+
+    const sql = `
+        SELECT s.skill_id, s.title, s.category, s.level, u.username AS instructor_username
+        FROM skills s
+        JOIN users u ON s.instructor_id = u.user_id
+        ORDER BY s.title ASC
+    `;
+    db.query(sql, (err, skills) => {
+        if (err) throw err;
+        res.render('requestBooking', {
+            user: req.session.user,
+            skills,
+            selectedSkillId: req.query.skill_id || '',
+            message: req.flash('message')
+        });
+    });
+});
+
+// Request a lesson (create booking, status starts as pending)
+app.post('/bookings/new', isAuthenticated, (req, res) => {
+    if (req.session.user.role === 'instructor') {
+        req.flash('message', 'Instructors cannot request lessons');
+        return res.redirect('/bookings');
+    }
+
+    const { skill_id, booking_date, booking_time, notes } = req.body;
+
+    if (!skill_id || !booking_date || !booking_time) {
+        req.flash('message', 'Please fill in the skill, date and time');
+        return res.redirect('/bookings/new');
+    }
+
+    // Block bookings in the past
+    const requested = new Date(booking_date + 'T' + booking_time);
+    if (isNaN(requested.getTime()) || requested <= new Date()) {
+        req.flash('message', 'Please choose a date and time in the future');
+        return res.redirect('/bookings/new');
+    }
+
+    const sql = `
+        INSERT INTO bookings (skill_id, learner_id, booking_date, booking_time, notes, status)
+        VALUES (?, ?, ?, ?, ?, 'pending')
+    `;
+    db.query(sql, [skill_id, req.session.user.id, booking_date, booking_time, notes || null], (err) => {
+        if (err) throw err;
+        req.flash('message', 'Lesson requested! Waiting for the instructor to respond.');
+        res.redirect('/bookings');
+    });
+});
+
+// Accept a booking — only the instructor who owns the skill
+app.post('/bookings/:id/accept', isAuthenticated, isInstructor, (req, res) => {
+    const sql = `
+        UPDATE bookings b
+        JOIN skills s ON b.skill_id = s.skill_id
+        SET b.status = 'accepted'
+        WHERE b.booking_id = ? AND s.instructor_id = ? AND b.status = 'pending'
+    `;
+    db.query(sql, [req.params.id, req.session.user.id], (err, result) => {
+        if (err) throw err;
+        req.flash('message', result.affectedRows ? 'Booking accepted' : 'Unable to accept this booking');
+        res.redirect('/bookings');
+    });
+});
+
+// Reject a booking — only the instructor who owns the skill
+app.post('/bookings/:id/reject', isAuthenticated, isInstructor, (req, res) => {
+    const sql = `
+        UPDATE bookings b
+        JOIN skills s ON b.skill_id = s.skill_id
+        SET b.status = 'rejected'
+        WHERE b.booking_id = ? AND s.instructor_id = ? AND b.status = 'pending'
+    `;
+    db.query(sql, [req.params.id, req.session.user.id], (err, result) => {
+        if (err) throw err;
+        req.flash('message', result.affectedRows ? 'Booking rejected' : 'Unable to reject this booking');
+        res.redirect('/bookings');
+    });
+});
+
+// Cancel a booking — learner cancels their own, or instructor cancels one for their skill
+app.post('/bookings/:id/cancel', isAuthenticated, (req, res) => {
+    let sql, params;
+
+    if (req.session.user.role === 'instructor') {
+        sql = `
+            UPDATE bookings b
+            JOIN skills s ON b.skill_id = s.skill_id
+            SET b.status = 'cancelled'
+            WHERE b.booking_id = ? AND s.instructor_id = ?
+              AND b.status IN ('pending', 'accepted')
+        `;
+        params = [req.params.id, req.session.user.id];
+    } else if (req.session.user.role === 'admin') {
+        sql = `
+            UPDATE bookings SET status = 'cancelled'
+            WHERE booking_id = ? AND status IN ('pending', 'accepted')
+        `;
+        params = [req.params.id];
+    } else {
+        sql = `
+            UPDATE bookings SET status = 'cancelled'
+            WHERE booking_id = ? AND learner_id = ?
+              AND status IN ('pending', 'accepted')
+        `;
+        params = [req.params.id, req.session.user.id];
+    }
+
+    db.query(sql, params, (err, result) => {
+        if (err) throw err;
+        req.flash('message', result.affectedRows ? 'Booking cancelled' : 'Unable to cancel this booking');
+        res.redirect('/bookings');
+    });
+});
+
+// Mark a lesson as completed — instructor only, after it was accepted
+app.post('/bookings/:id/complete', isAuthenticated, isInstructor, (req, res) => {
+    const sql = `
+        UPDATE bookings b
+        JOIN skills s ON b.skill_id = s.skill_id
+        SET b.status = 'completed'
+        WHERE b.booking_id = ? AND s.instructor_id = ? AND b.status = 'accepted'
+    `;
+    db.query(sql, [req.params.id, req.session.user.id], (err, result) => {
+        if (err) throw err;
+        req.flash('message', result.affectedRows ? 'Lesson marked as completed' : 'Unable to update this booking');
+        res.redirect('/bookings');
+    });
+});
+
+// ================== END BOOKINGS (Hans) ==================== //
+
+
 // start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log('SkillBridge running on http://localhost:' + PORT));
