@@ -47,3 +47,56 @@ body {
   color: #222;
   border: 1px solid #222;
 }
+/* Create listing form */
+.listing-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+.listing-form-box {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  border-top: 4px solid var(--teach);
+}
+
+.listing-form-box h1 {
+  margin-bottom: 8px;
+}
+
+.form-description {
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+
+.listing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.listing-form label {
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.listing-form input,
+.listing-form textarea,
+.listing-form select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #DCE1E8;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.listing-form textarea {
+  resize: vertical;
+}
+
+.listing-form button {
+  margin-top: 16px;
+  border: none;
+  cursor: pointer;
+}
