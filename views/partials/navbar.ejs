@@ -4,7 +4,6 @@
 
     <% if (typeof user !== 'undefined' && user) { %>
       <div class="navbar-links">
-        <a href="/dashboard" class="navbar-link">Dashboard</a>
 
         <% if (user.role === 'instructor') { %>
           <a href="/skills" class="navbar-link">My Listings</a>
