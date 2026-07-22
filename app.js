@@ -250,7 +250,6 @@ app.post('/profile', isAuthenticated, (req, res) => {
 });
 
 
-// ===================== BOOKINGS (Hans) ===================== //
 
 // View bookings page (learner = my bookings, instructor = incoming requests, admin = all)
 app.get('/bookings', isAuthenticated, (req, res) => {
@@ -448,7 +447,7 @@ app.post('/bookings/:id/complete', isAuthenticated, isInstructor, (req, res) => 
     });
 });
 
-// ================== END BOOKINGS (Hans) ==================== //
+
 
 
 // start server
