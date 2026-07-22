@@ -1,24 +1,29 @@
-<nav>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/dashboard" class="navbar-brand">SkillBridge</a>
 
-  <% if (typeof user !== 'undefined' && user) { %>
-    <a href="/dashboard">Dashboard</a>
+    <% if (typeof user !== 'undefined' && user) { %>
+      <div class="navbar-links">
+        <a href="/dashboard" class="navbar-link">Dashboard</a>
 
-    <% if (user.role === 'instructor') { %>
-      <a href="/skills">My Listings</a>
+        <% if (user.role === 'instructor') { %>
+          <a href="/skills" class="navbar-link">My Listings</a>
+        <% } %>
+
+        <a href="/bookings" class="navbar-link">Bookings</a>
+        <a href="/profile" class="navbar-link">Profile</a>
+
+        <% if (user.role === 'admin') { %>
+          <a href="/admin" class="navbar-link">Admin</a>
+        <% } %>
+
+        <a href="/logout" class="navbar-link navbar-logout">Logout</a>
+      </div>
+    <% } else { %>
+      <div class="navbar-links">
+        <a href="/login" class="navbar-link">Login</a>
+        <a href="/register" class="navbar-link navbar-cta">Register</a>
+      </div>
     <% } %>
-
-    <a href="/bookings">Bookings</a>
-    <a href="/profile">Profile</a>
-
-    <% if (user.role === 'admin') { %>
-      <a href="/admin">Admin</a>
-    <% } %>
-
-    <a href="/logout">Logout</a>
-  <% } else { %>
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
-  <% } %>
+  </div>
 </nav>
-
-<hr>

@@ -104,3 +104,204 @@ body {
   border: none;
   cursor: pointer;
 }
+
+/* ---------- Navbar ---------- */
+.navbar {
+  background: var(--panel, #fff);
+  border-bottom: 1px solid #DCE1E8;
+}
+
+.navbar-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.navbar-brand {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--ink, #17233D);
+  text-decoration: none;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.navbar-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink-soft, #4C5A72);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.navbar-link:hover { color: var(--ink, #17233D); }
+.navbar-link:focus-visible { outline: 2px solid var(--gold, #D4A24C); outline-offset: 3px; }
+
+.navbar-logout { color: var(--learn, #FF6B5B); }
+
+.navbar-cta {
+  background: var(--ink, #17233D);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 6px;
+}
+.navbar-cta:hover { background: #000; color: #fff; }
+
+/* ---------- Dashboard layout ---------- */
+.dashboard-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.dashboard-header h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.dashboard-section { margin-top: 40px; }
+
+.dashboard-section h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.3rem;
+  margin: 0 0 18px;
+}
+
+/* ---------- Empty state ---------- */
+.empty-state {
+  background: var(--panel, #fff);
+  border: 1.5px dashed #DCE1E8;
+  border-radius: 12px;
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--ink-soft, #4C5A72);
+}
+
+/* ---------- Table card ---------- */
+.table-card {
+  background: var(--panel, #fff);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(23, 35, 61, 0.06);
+  border-top: 4px solid var(--teach, #0F8B8D);
+}
+
+.skills-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.skills-table thead th {
+  text-align: left;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft, #4C5A72);
+  padding: 14px 20px;
+  border-bottom: 1px solid #DCE1E8;
+  background: #F8F9FB;
+}
+
+.skills-table tbody td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #EEF1F5;
+  font-size: 0.92rem;
+  color: var(--ink, #17233D);
+  vertical-align: middle;
+}
+
+.skills-table tbody tr:last-child td { border-bottom: none; }
+.skills-table tbody tr:hover { background: #FAFBFD; }
+
+.skill-title {
+  font-weight: 600;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* ---------- Level badges ---------- */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-transform: capitalize;
+}
+
+.badge-beginner {
+  background: rgba(15, 139, 141, 0.1);
+  color: var(--teach, #0F8B8D);
+}
+
+.badge-intermediate {
+  background: rgba(212, 162, 76, 0.16);
+  color: #93701F;
+}
+
+.badge-advanced {
+  background: rgba(255, 107, 91, 0.1);
+  color: var(--learn, #FF6B5B);
+}
+
+/* ---------- Row actions ---------- */
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.inline-form { display: inline; }
+
+.action-btn {
+  appearance: none;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: 1.5px solid #DCE1E8;
+  background: #fff;
+  color: var(--ink, #17233D);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.15s ease;
+}
+.action-btn:hover { border-color: var(--ink, #17233D); }
+.action-btn:focus-visible { outline: 2px solid var(--gold, #D4A24C); outline-offset: 2px; }
+
+.action-btn-delete {
+  border-color: rgba(255, 107, 91, 0.4);
+  color: var(--learn, #FF6B5B);
+}
+.action-btn-delete:hover {
+  background: rgba(255, 107, 91, 0.08);
+  border-color: var(--learn, #FF6B5B);
+}
+
+@media (max-width: 640px) {
+  .dashboard-header { flex-direction: column; align-items: flex-start; }
+  .skills-table { display: block; overflow-x: auto; white-space: nowrap; }
+}

@@ -9,56 +9,65 @@
 
   <%- include('partials/navbar', { user: user }) %>
 
-  <h1>Dashboard</h1>
+  <main class="dashboard-wrap">
+    <div class="dashboard-header">
+      <h1>Hi, <%= user.username %>!</h1>
+      <% if (user.role === 'instructor' || user.role === 'admin') { %>
+        <a href="/skills/add" class="btn btn-register">+ Add New Skill Course</a>
+      <% } %>
+    </div>
 
-  <% if (user.role === 'instructor' || user.role === 'admin') { %>
-    <a href="/skills/add"><button>+ Add New Skill Course</button></a>
-  <% } %>
+    <section class="dashboard-section">
+      <h2>All Skill Courses</h2>
 
-  <h2>All Skill Courses</h2>
+      <% if (skills.length === 0) { %>
+        <div class="empty-state">
+          <p>No skill courses available yet.</p>
+        </div>
+      <% } else { %>
+        <div class="table-card">
+          <table class="skills-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Level</th>
+                <th>Duration</th>
+                <th>Mode</th>
+                <th>Instructor</th>
+                <% if (user.role === 'instructor' || user.role === 'admin') { %>
+                  <th>Actions</th>
+                <% } %>
+              </tr>
+            </thead>
+            <tbody>
+              <% skills.forEach(skill => { %>
+                <tr>
+                  <td class="skill-title"><%= skill.title %></td>
+                  <td><%= skill.category %></td>
+                  <td><span class="badge badge-<%= skill.level %>"><%= skill.level %></span></td>
+                  <td><%= skill.duration %> hr</td>
+                  <td><%= skill.mode %></td>
+                  <td><%= skill.instructor_username || skill.instructor_id %></td>
 
-  <% if (skills.length === 0) { %>
-    <p>No skill courses available yet.</p>
-  <% } else { %>
-    <table border="1" cellpadding="8">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Category</th>
-          <th>Level</th>
-          <th>Duration</th>
-          <th>Mode</th>
-          <th>Instructor</th>
-          <% if (user.role === 'instructor' || user.role === 'admin') { %>
-            <th>Actions</th>
-          <% } %>
-        </tr>
-      </thead>
-      <tbody>
-        <% skills.forEach(skill => { %>
-          <tr>
-            <td><%= skill.title %></td>
-            <td><%= skill.category %></td>
-            <td><%= skill.level %></td>
-            <td><%= skill.duration %> hr</td>
-            <td><%= skill.mode %></td>
-            <td><%= skill.instructor_username || skill.instructor_id %></td>
-
-            <% if (user.role === 'admin' || (user.role === 'instructor' && skill.instructor_id === user.id)) { %>
-              <td>
-                <a href="/skills/<%= skill.skill_id %>/edit"><button>Edit</button></a>
-                <form action="/skills/<%= skill.skill_id %>/delete" method="POST" style="display:inline;">
-                  <button type="submit" onclick="return confirm('Delete this skill course?')">Delete</button>
-                </form>
-              </td>
-            <% } else if (user.role === 'instructor' || user.role === 'admin') { %>
-              <td>&mdash;</td>
-            <% } %>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  <% } %>
+                  <% if (user.role === 'admin' || (user.role === 'instructor' && skill.instructor_id === user.id)) { %>
+                    <td class="actions-cell">
+                      <a href="/skills/<%= skill.skill_id %>/edit" class="action-btn">Edit</a>
+                      <form action="/skills/<%= skill.skill_id %>/delete" method="POST" class="inline-form">
+                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('Delete this skill course?')">Delete</button>
+                      </form>
+                    </td>
+                  <% } else if (user.role === 'instructor' || user.role === 'admin') { %>
+                    <td class="actions-cell">&mdash;</td>
+                  <% } %>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </section>
+  </main>
 
 </body>
 </html>
