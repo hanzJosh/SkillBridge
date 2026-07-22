@@ -11,9 +11,10 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+js
 // Session
 app.use(session({
-    secret: 'secret',
+    secret: process.env.SESSION_SECRET || 'secret',
     resave: true,
     saveUninitialized: true
 }));
@@ -21,10 +22,13 @@ app.use(flash());
 
 // Database
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'RP738964$',
-    database: 'c237_skillbridge'
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'RP738964$',
+    database: process.env.DB_NAME || 'c237_skillbridge',
+    // Azure Database for MySQL requires SSL — set DB_SSL=true on Render
+    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined
 });
 
 db.connect((err) => {
