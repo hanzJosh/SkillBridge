@@ -1,29 +1,72 @@
+:root {
+  --ink: #17233D;
+  --ink-soft: #4C5A72;
+  --teach: #0F8B8D;
+  --learn: #FF6B5B;
+  --gold: #D4A24C;
+  --panel: #FFFFFF;
+  --bg: #F5F6FA;
+}
+
+* { box-sizing: border-box; }
+
 body {
-  font-family: Arial, sans-serif;
-  background: #F5F6FA;
-  color: #222;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
   margin: 0;
+  line-height: 1.5;
+}
+
+.auth-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+.back-link:hover { color: var(--ink); }
+
+.eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
 }
 
 .form-section {
-  max-width: 420px;
-  margin: 70px auto;
-  background: #fff;
-  padding: 40px 32px;
+  max-width: 460px;
+  width: 100%;
+  background: var(--panel);
+  padding: 40px 36px;
   border-radius: 12px;
-  border-top: 4px solid var(--teach, #2F6FED);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.05);
+  border-top: 4px solid var(--learn);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 .form-section h1 {
-  margin: 0 0 24px;
+  margin: 6px 0 4px;
   font-size: 1.75rem;
 }
 
+.form-section .sub {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  margin: 0 0 24px;
+}
+
 .flash {
-  background: #FFF4E5;
-  color: #8A5A00;
-  border: 1px solid #FFE1B3;
+  background: #FBF4E6;
+  color: var(--ink);
+  border: 1px solid #EAD8AE;
   padding: 10px 14px;
   border-radius: 6px;
   font-size: 14px;
@@ -33,80 +76,141 @@ body {
 .form {
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
-.form label {
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.field label {
   font-weight: 600;
-  margin-top: 12px;
   font-size: 14px;
 }
 
-.form input,
-.form select {
+.field input {
   width: 100%;
-  padding: 11px;
+  padding: 12px 14px;
   border: 1px solid #DCE1E8;
   border-radius: 6px;
   font: inherit;
-  box-sizing: border-box;
   background: #fff;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.form select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23667085' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
-}
-
-.form input:focus,
-.form select:focus {
+.field input:focus {
   outline: none;
-  border-color: var(--teach, #2F6FED);
-  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.12);
+  border-color: var(--teach);
+  box-shadow: 0 0 0 3px rgba(15, 139, 141, 0.12);
 }
 
+.field .hint {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+}
+
+.password-field { position: relative; }
+.password-field input { padding-right: 54px; }
+
+.toggle-pw {
+  position: absolute;
+  right: 8px;
+  top: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+.toggle-pw:hover { color: var(--ink); }
+.toggle-pw:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+.role-picker {
+  display: flex;
+  gap: 10px;
+}
+
+.role-option { flex: 1; }
+
+.role-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.role-option label {
+  display: block;
+  text-align: center;
+  padding: 14px 8px;
+  border: 1.5px solid #DCE1E8;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.role-option.teach input:checked + label {
+  border-color: var(--teach);
+  color: var(--teach);
+  background: rgba(15, 139, 141, 0.07);
+}
+
+.role-option.learn input:checked + label {
+  border-color: var(--learn);
+  color: var(--learn);
+  background: rgba(255, 107, 91, 0.07);
+}
+
+.role-option label:hover { border-color: var(--ink-soft); }
+
+.btn-block,
 .form .btn {
-  margin-top: 24px;
-  padding: 12px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px;
   border: none;
   border-radius: 6px;
-  background: #222;
+  background: var(--ink);
   color: #fff;
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
+.form .btn:hover,
+.btn-block:hover { background: #000; }
+.form .btn:focus-visible,
+.btn-block:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
-.form .btn:hover {
-  background: #000;
-}
-
+.foot,
 .form-section > p {
   margin-top: 22px;
   margin-bottom: 0;
   text-align: center;
   font-size: 14px;
-  color: #555;
+  color: var(--ink-soft);
 }
 
+.foot a,
 .form-section > p a {
-  color: var(--teach, #2F6FED);
+  color: var(--teach);
   font-weight: 600;
   text-decoration: none;
-  border-bottom: 1.5px solid var(--teach, #2F6FED);
+  border-bottom: 1.5px solid var(--teach);
 }
-
-.form-section > p a:hover {
-  opacity: 0.75;
-}
+.foot a:hover,
+.form-section > p a:hover { opacity: 0.75; }
 
 @media (max-width: 480px) {
   .form-section {
-    margin: 40px 20px;
     padding: 32px 24px;
   }
 }
