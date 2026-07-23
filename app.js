@@ -297,28 +297,65 @@ app.post('/skills/:id/edit', isAuthenticated, (req, res) => {
 });
 
 // Delete a listing — only for the listing owner
-
 app.post('/skills/:id/delete', isAuthenticated, (req, res) => {
 
-    let sql;
-    let params;
+    const skillId = req.params.id;
 
-    if (req.session.user.role === 'admin') {
-        sql = 'DELETE FROM skills WHERE skill_id = ?';
-        params = [req.params.id];
-    } else if (req.session.user.role === 'instructor') {
-        sql = 'DELETE FROM skills WHERE skill_id = ? AND instructor_id = ?';
-        params = [req.params.id, req.session.user.id];
-    } else {
+    if (
+        req.session.user.role !== 'admin' &&
+        req.session.user.role !== 'instructor'
+    ) {
         return res.status(403).send('Access denied');
     }
 
-    db.query(sql, params, (err) => {
-        if (err) throw err;
-        res.redirect('/skills');
+    const deleteReviews = `
+        DELETE r
+        FROM reviews r
+        JOIN bookings b ON r.booking_id = b.booking_id
+        WHERE b.skill_id = ?
+    `;
+
+    db.query(deleteReviews, [skillId], (err) => {
+        if (err) return res.status(500).send(err.message);
+
+        db.query(
+            'DELETE FROM bookings WHERE skill_id = ?',
+            [skillId],
+            (err) => {
+                if (err) return res.status(500).send(err.message);
+
+                db.query(
+                    'DELETE FROM favourites WHERE skill_id = ?',
+                    [skillId],
+                    (err) => {
+                        if (err) return res.status(500).send(err.message);
+
+                        let sql;
+                        let params;
+
+                        if (req.session.user.role === 'admin') {
+                            sql = 'DELETE FROM skills WHERE skill_id = ?';
+                            params = [skillId];
+                        } else {
+                            sql = `
+                                DELETE FROM skills
+                                WHERE skill_id = ?
+                                AND instructor_id = ?
+                            `;
+                            params = [skillId, req.session.user.id];
+                        }
+
+                        db.query(sql, params, (err) => {
+                            if (err) return res.status(500).send(err.message);
+
+                            res.redirect('/dashboard');
+                        });
+                    }
+                );
+            }
+        );
     });
 });
-
 
 // View profile
 app.get('/profile', isAuthenticated, (req, res) => {
