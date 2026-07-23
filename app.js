@@ -301,45 +301,62 @@ app.post('/skills/:id/delete', isAuthenticated, isAdmin, (req, res) => {
 
     const skillId = req.params.id;
 
-    db.query(
-        'DELETE FROM favourites WHERE skill_id = ?',
-        [skillId],
-        (err) => {
+    // Delete reviews linked to bookings of this skill
+    const deleteReviews = `
+        DELETE r
+        FROM reviews r
+        JOIN bookings b ON r.booking_id = b.booking_id
+        WHERE b.skill_id = ?
+    `;
 
-            if (err) {
-                console.error(err);
-                return res.status(500).send(err.message);
-            }
-
-            db.query(
-                'DELETE FROM bookings WHERE skill_id = ?',
-                [skillId],
-                (err) => {
-
-                    if (err) {
-                        console.error(err);
-                        return res.status(500).send(err.message);
-                    }
-
-                    db.query(
-                        'DELETE FROM skills WHERE skill_id = ?',
-                        [skillId],
-                        (err) => {
-
-                            if (err) {
-                                console.error(err);
-                                return res.status(500).send(err.message);
-                            }
-
-                            res.redirect('/dashboard');
-                        }
-                    );
-                }
-            );
+    db.query(deleteReviews, [skillId], (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send(err.message);
         }
-    );
-});
 
+        // Delete bookings
+        db.query(
+            'DELETE FROM bookings WHERE skill_id = ?',
+            [skillId],
+            (err) => {
+
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send(err.message);
+                }
+
+                // Delete favourites
+                db.query(
+                    'DELETE FROM favourites WHERE skill_id = ?',
+                    [skillId],
+                    (err) => {
+
+                        if (err) {
+                            console.error(err);
+                            return res.status(500).send(err.message);
+                        }
+
+                        // Finally delete skill
+                        db.query(
+                            'DELETE FROM skills WHERE skill_id = ?',
+                            [skillId],
+                            (err) => {
+
+                                if (err) {
+                                    console.error(err);
+                                    return res.status(500).send(err.message);
+                                }
+
+                                res.redirect('/dashboard');
+                            }
+                        );
+                    }
+                );
+            }
+        );
+    });
+});
 
 // View profile
 app.get('/profile', isAuthenticated, (req, res) => {
