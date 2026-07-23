@@ -297,24 +297,48 @@ app.post('/skills/:id/edit', isAuthenticated, (req, res) => {
 });
 
 // Delete a listing — only for the listing owner
+app.post('/skills/:id/delete', isAuthenticated, isAdmin, (req, res) => {
 
-app.post('/skills/:id/delete', isAuthenticated, (req, res) => {
+    const skillId = req.params.id;
 
     db.query(
-        'DELETE FROM skills WHERE skill_id = ?',
-        [req.params.id],
-        (err, result) => {
+        'DELETE FROM favourites WHERE skill_id = ?',
+        [skillId],
+        (err) => {
 
             if (err) {
                 console.error(err);
                 return res.status(500).send(err.message);
             }
 
-            res.redirect('/skills');
+            db.query(
+                'DELETE FROM bookings WHERE skill_id = ?',
+                [skillId],
+                (err) => {
+
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).send(err.message);
+                    }
+
+                    db.query(
+                        'DELETE FROM skills WHERE skill_id = ?',
+                        [skillId],
+                        (err) => {
+
+                            if (err) {
+                                console.error(err);
+                                return res.status(500).send(err.message);
+                            }
+
+                            res.redirect('/dashboard');
+                        }
+                    );
+                }
+            );
         }
     );
 });
-
 
 
 // View profile
