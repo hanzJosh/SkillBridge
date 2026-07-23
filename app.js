@@ -121,35 +121,57 @@ app.get('/logout', (req, res) => {
     });
 });
 
+//dashboard
 app.get('/dashboard', isAuthenticated, (req, res) => {
-    const sql = `
+    const { keyword, category, level, mode } = req.query;
+ 
+    let sql = `
         SELECT s.*, u.username AS instructor_username
         FROM skills s
         LEFT JOIN users u ON s.instructor_id = u.user_id
-        ORDER BY s.created_at DESC
+        WHERE 1=1
     `;
-
-    db.query(sql, (err, skills) => {
+    const params = [];
+ 
+    if (keyword)  { sql += ' AND s.title LIKE ?'; params.push(`%${keyword}%`); }
+    if (category) { sql += ' AND s.category LIKE ?'; params.push(`%${category}%`); }
+    if (level)    { sql += ' AND s.level = ?';    params.push(level); }
+    if (mode)     { sql += ' AND s.mode = ?';     params.push(mode); }
+ 
+    sql += ' ORDER BY s.created_at DESC';
+ 
+    db.query(sql, params, (err, skills) => {
         if (err) throw err;
-
-        db.query(
-            'SELECT skill_id FROM favourites WHERE user_id = ?',
-            [req.session.user.id],
-            (err2, favourites) => {
-                if (err2) throw err2;
-
-                const favouritedIds = favourites.map(f => f.skill_id);
-
-                res.render('dashboard', {
-                    user: req.session.user,
-                    skills,
-                    favouritedIds
-                });
-            }
-        );
+ 
+        db.query('SELECT DISTINCT category FROM skills ORDER BY category', (errCat, categoryRows) => {
+            if (errCat) throw errCat;
+ 
+            db.query(
+                'SELECT skill_id FROM favourites WHERE user_id = ?',
+                [req.session.user.id],
+                (err2, favourites) => {
+                    if (err2) throw err2;
+ 
+                    const favouritedIds = favourites.map(f => f.skill_id);
+ 
+                    res.render('dashboard', {
+                        user: req.session.user,
+                        skills,
+                        favouritedIds,
+                        categories: categoryRows.map(c => c.category),
+                        filters: {
+                            keyword: keyword || '',
+                            category: category || '',
+                            level: level || '',
+                            mode: mode || ''
+                        }
+                    });
+                }
+            );
+        });
     });
 });
-
+ 
 app.post('/dashboard', isAuthenticated, (req, res) => {
     const { username, email } = req.body;
     const sql = 'UPDATE users SET username = ?, email = ? WHERE user_id = ?';

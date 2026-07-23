@@ -17,16 +17,51 @@
       <% } %>
     </div>
 
-    <div class="search-filter">
-      <input type="text" id="skill-search" placeholder="Search skill courses..." />
-    </div>
+    <form class="search-filter" method="GET" action="/dashboard">
+      <input
+        type="text"
+        name="keyword"
+        placeholder="Search skill courses..."
+        value="<%= filters.keyword %>"
+      />
+
+      <input
+        type="text"
+        name="category"
+        placeholder="Category (e.g. Music)"
+        value="<%= filters.category %>"
+      />
+
+      <select name="level">
+        <option value="">All levels</option>
+        <option value="beginner" <%= filters.level === 'beginner' ? 'selected' : '' %>>Beginner</option>
+        <option value="intermediate" <%= filters.level === 'intermediate' ? 'selected' : '' %>>Intermediate</option>
+        <option value="advanced" <%= filters.level === 'advanced' ? 'selected' : '' %>>Advanced</option>
+      </select>
+
+      <select name="mode">
+        <option value="">All modes</option>
+        <option value="online" <%= filters.mode === 'online' ? 'selected' : '' %>>Online</option>
+        <option value="offline" <%= filters.mode === 'offline' ? 'selected' : '' %>>In person</option>
+        <option value="hybrid" <%= filters.mode === 'hybrid' ? 'selected' : '' %>>Hybrid</option>
+      </select>
+
+      <button type="submit" class="btn btn-secondary">Search</button>
+      <% if (filters.keyword || filters.category || filters.level || filters.mode) { %>
+        <a href="/dashboard" class="action-btn">Clear</a>
+      <% } %>
+    </form>
 
     <section class="dashboard-section">
       <h2>All Skill Courses</h2>
 
       <% if (skills.length === 0) { %>
         <div class="empty-state">
-          <p>No skill courses available yet.</p>
+          <% if (filters.keyword || filters.category || filters.level || filters.mode) { %>
+            <p>No skill courses match your search. <a href="/dashboard">Clear filters</a> to see everything.</p>
+          <% } else { %>
+            <p>No skill courses available yet.</p>
+          <% } %>
         </div>
       <% } else { %>
         <div class="table-card">
@@ -39,8 +74,9 @@
                 <th>Duration</th>
                 <th>Mode</th>
                 <th>Instructor</th>
+                <th>Actions</th>
                 <% if (user.role === 'instructor' || user.role === 'admin') { %>
-                  <th></th>
+                  <th>Manage</th>
                 <% } %>
               </tr>
             </thead>
