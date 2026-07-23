@@ -219,48 +219,106 @@ app.post('/skills/add', isAuthenticated, isInstructor, (req, res) => {
 });
 
 // Show edit form — only for the listing owner
-app.get('/skills/:id/edit', isAuthenticated, isInstructor,isAdmin, (req, res) => {
-    const sql = 'SELECT * FROM skills WHERE skill_id = ? AND instructor_id = ?';
+app.get('/skills/:id/edit', isAuthenticated, (req, res) => {
 
-    db.query(sql, [req.params.id, req.session.user.id], (err, results) => {
+    let sql;
+    let params;
+
+    if (req.session.user.role === 'admin') {
+        sql = 'SELECT * FROM skills WHERE skill_id = ?';
+        params = [req.params.id];
+    } else if (req.session.user.role === 'instructor') {
+        sql = 'SELECT * FROM skills WHERE skill_id = ? AND instructor_id = ?';
+        params = [req.params.id, req.session.user.id];
+    } else {
+        return res.status(403).send('Access denied');
+    }
+
+    db.query(sql, params, (err, results) => {
         if (err) throw err;
-        if (results.length === 0) return res.status(404).send('Listing not found');
 
-        res.render('editSkill', { user: req.session.user, skill: results[0] });
+        if (results.length === 0) {
+            return res.status(404).send('Listing not found');
+        }
+
+        res.render('editSkill', {
+            user: req.session.user,
+            skill: results[0]
+        });
     });
 });
 
 // Save an edited listing — only for the listing owner
-app.post('/skills/:id/edit', isAuthenticated, isInstructor,isAdmin, (req, res) => {
+app.post('/skills/:id/edit', isAuthenticated, (req, res) => {
+
     const { title, description, category, level, duration, mode } = req.body;
 
-    const sql = `
-        UPDATE skills
-        SET title = ?, description = ?, category = ?, level = ?,
-            duration = ?, mode = ?
-        WHERE skill_id = ? AND instructor_id = ?
-    `;
+    let sql;
+    let params;
 
-    db.query(
-        sql,
-        [title, description, category, level, duration, mode,
-        req.params.id, req.session.user.id],
-        (err) => {
-            if (err) throw err;
-            res.redirect('/skills');
-        }
-    );
-});
+    if (req.session.user.role === 'admin') {
 
-// Delete a listing — only for the listing owner
-app.post('/skills/:id/delete', isAuthenticated, isInstructor,isAdmin, (req, res) => {
-    const sql = 'DELETE FROM skills WHERE skill_id = ? AND instructor_id = ?';
+        sql = `
+            UPDATE skills
+            SET title = ?, description = ?, category = ?,
+                level = ?, duration = ?, mode = ?
+            WHERE skill_id = ?
+        `;
 
-    db.query(sql, [req.params.id, req.session.user.id], (err) => {
+        params = [
+            title, description, category,
+            level, duration, mode,
+            req.params.id
+        ];
+
+    } else if (req.session.user.role === 'instructor') {
+
+        sql = `
+            UPDATE skills
+            SET title = ?, description = ?, category = ?,
+                level = ?, duration = ?, mode = ?
+            WHERE skill_id = ? AND instructor_id = ?
+        `;
+
+        params = [
+            title, description, category,
+            level, duration, mode,
+            req.params.id, req.session.user.id
+        ];
+
+    } else {
+        return res.status(403).send('Access denied');
+    }
+
+    db.query(sql, params, (err) => {
         if (err) throw err;
         res.redirect('/skills');
     });
 });
+
+// Delete a listing — only for the listing owner
+
+app.post('/skills/:id/delete', isAuthenticated, (req, res) => {
+
+    let sql;
+    let params;
+
+    if (req.session.user.role === 'admin') {
+        sql = 'DELETE FROM skills WHERE skill_id = ?';
+        params = [req.params.id];
+    } else if (req.session.user.role === 'instructor') {
+        sql = 'DELETE FROM skills WHERE skill_id = ? AND instructor_id = ?';
+        params = [req.params.id, req.session.user.id];
+    } else {
+        return res.status(403).send('Access denied');
+    }
+
+    db.query(sql, params, (err) => {
+        if (err) throw err;
+        res.redirect('/skills');
+    });
+});
+
 
 // View profile
 app.get('/profile', isAuthenticated, (req, res) => {
