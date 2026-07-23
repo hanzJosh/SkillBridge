@@ -297,11 +297,16 @@ app.post('/skills/:id/edit', isAuthenticated, (req, res) => {
 });
 
 // Delete a listing — only for the listing owner
-app.post('/skills/:id/delete', isAuthenticated, isAdmin, (req, res) => {
+app.post('/skills/:id/delete', isAuthenticated, (req, res) => {
 
     const skillId = req.params.id;
 
-    console.log('Deleting skill:', skillId);
+    if (
+        req.session.user.role !== 'admin' &&
+        req.session.user.role !== 'instructor'
+    ) {
+        return res.status(403).send('Access denied');
+    }
 
     const deleteReviews = `
         DELETE r
@@ -310,54 +315,41 @@ app.post('/skills/:id/delete', isAuthenticated, isAdmin, (req, res) => {
         WHERE b.skill_id = ?
     `;
 
-    db.query(deleteReviews, [skillId], (err, result) => {
-
-        if (err) {
-            console.error('Review delete error:', err);
-            return res.status(500).send(err.message);
-        }
-
-        console.log('Reviews deleted:', result.affectedRows);
+    db.query(deleteReviews, [skillId], (err) => {
+        if (err) return res.status(500).send(err.message);
 
         db.query(
             'DELETE FROM bookings WHERE skill_id = ?',
             [skillId],
-            (err, result) => {
-
-                if (err) {
-                    console.error('Booking delete error:', err);
-                    return res.status(500).send(err.message);
-                }
-
-                console.log('Bookings deleted:', result.affectedRows);
+            (err) => {
+                if (err) return res.status(500).send(err.message);
 
                 db.query(
                     'DELETE FROM favourites WHERE skill_id = ?',
                     [skillId],
-                    (err, result) => {
+                    (err) => {
+                        if (err) return res.status(500).send(err.message);
 
-                        if (err) {
-                            console.error('Favourite delete error:', err);
-                            return res.status(500).send(err.message);
+                        let sql;
+                        let params;
+
+                        if (req.session.user.role === 'admin') {
+                            sql = 'DELETE FROM skills WHERE skill_id = ?';
+                            params = [skillId];
+                        } else {
+                            sql = `
+                                DELETE FROM skills
+                                WHERE skill_id = ?
+                                AND instructor_id = ?
+                            `;
+                            params = [skillId, req.session.user.id];
                         }
 
-                        console.log('Favourites deleted:', result.affectedRows);
+                        db.query(sql, params, (err) => {
+                            if (err) return res.status(500).send(err.message);
 
-                        db.query(
-                            'DELETE FROM skills WHERE skill_id = ?',
-                            [skillId],
-                            (err, result) => {
-
-                                if (err) {
-                                    console.error('Skill delete error:', err);
-                                    return res.status(500).send(err.message);
-                                }
-
-                                console.log('Skills deleted:', result.affectedRows);
-
-                                res.redirect('/dashboard');
-                            }
-                        );
+                            res.redirect('/dashboard');
+                        });
                     }
                 );
             }
