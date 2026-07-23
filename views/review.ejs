@@ -23,26 +23,30 @@
 
     <section class="review-form-card">
       <h2>Leave a Review</h2>
-      <form action="/skills/<%= skill.skill_id %>/review" method="POST" class="form">
-        <div class="field">
-          <label for="rating">Rating</label>
-          <select name="rating" id="rating" required>
-            <option value="">Select a rating</option>
-            <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733; &mdash; Excellent</option>
-            <option value="4">&#9733;&#9733;&#9733;&#9733; &mdash; Good</option>
-            <option value="3">&#9733;&#9733;&#9733; &mdash; Average</option>
-            <option value="2">&#9733;&#9733; &mdash; Poor</option>
-            <option value="1">&#9733; &mdash; Terrible</option>
-          </select>
-        </div>
+      <% if (user) { %>
+        <form action="/skills/<%= skill.skill_id %>/review" method="POST" class="form">
+          <div class="field">
+            <label for="rating">Rating</label>
+            <select name="rating" id="rating" required>
+              <option value="">Select a rating</option>
+              <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733; &mdash; Excellent</option>
+              <option value="4">&#9733;&#9733;&#9733;&#9733; &mdash; Good</option>
+              <option value="3">&#9733;&#9733;&#9733; &mdash; Average</option>
+              <option value="2">&#9733;&#9733; &mdash; Poor</option>
+              <option value="1">&#9733; &mdash; Terrible</option>
+            </select>
+          </div>
 
-        <div class="field">
-          <label for="comment">Comment</label>
-          <textarea name="comment" id="comment" rows="4" placeholder="What did you think of this course?"></textarea>
-        </div>
+          <div class="field">
+            <label for="comment">Comment</label>
+            <textarea name="comment" id="comment" rows="4" placeholder="What did you think of this course?"></textarea>
+          </div>
 
-        <button type="submit" class="btn btn-register btn-block">Post Review</button>
-      </form>
+          <button type="submit" class="btn btn-register btn-block">Post Review</button>
+        </form>
+      <% } else { %>
+        <p><a href="/login">Log in</a> and sign up for this course to leave a review.</p>
+      <% } %>
     </section>
 
     <section class="review-list">
