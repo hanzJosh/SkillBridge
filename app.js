@@ -128,9 +128,25 @@ app.get('/dashboard', isAuthenticated, (req, res) => {
         LEFT JOIN users u ON s.instructor_id = u.user_id
         ORDER BY s.created_at DESC
     `;
+
     db.query(sql, (err, skills) => {
         if (err) throw err;
-        res.render('dashboard', { user: req.session.user, skills });
+
+        db.query(
+            'SELECT skill_id FROM favourites WHERE user_id = ?',
+            [req.session.user.id],
+            (err2, favourites) => {
+                if (err2) throw err2;
+
+                const favouritedIds = favourites.map(f => f.skill_id);
+
+                res.render('dashboard', {
+                    user: req.session.user,
+                    skills,
+                    favouritedIds
+                });
+            }
+        );
     });
 });
 
@@ -448,6 +464,85 @@ app.post('/bookings/:id/complete', isAuthenticated, isInstructor, (req, res) => 
 });
 
 
+
+// View saved (favourited) courses
+app.get('/favourites', isAuthenticated, (req, res) => {
+    const sql = `
+        SELECT s.*, u.username AS instructor_username
+        FROM favourites f
+        JOIN skills s ON f.skill_id = s.skill_id
+        LEFT JOIN users u ON s.instructor_id = u.user_id
+        WHERE f.user_id = ?
+        ORDER BY f.id DESC
+    `;
+    db.query(sql, [req.session.user.id], (err, skills) => {
+        if (err) throw err;
+        res.render('favourites', { user: req.session.user, skills, message: req.flash('message') });
+    });
+});
+
+// Show a course's reviews + the review form
+app.get('/skills/:id/review', isAuthenticated, (req, res) => {
+    const skillId = req.params.id;
+
+    const skillSql = `
+        SELECT s.*, u.username AS instructor_username
+        FROM skills s
+        LEFT JOIN users u ON s.instructor_id = u.user_id
+        WHERE s.skill_id = ?
+    `;
+    db.query(skillSql, [skillId], (err, skillRows) => {
+        if (err) throw err;
+        if (skillRows.length === 0) return res.status(404).send('Course not found');
+
+        const reviewsSql = `
+            SELECT r.*, u.username
+            FROM reviews r
+            JOIN bookings b ON r.booking_id = b.booking_id
+            JOIN users u ON b.learner_id = u.user_id
+            WHERE b.skill_id = ?
+            ORDER BY r.created_at DESC
+        `;
+        db.query(reviewsSql, [skillId], (err2, reviews) => {
+            if (err2) throw err2;
+            res.render('review', {
+                user: req.session.user,
+                skill: skillRows[0],
+                reviews,
+                message: req.flash('message')
+            });
+        });
+    });
+});
+
+// Submit a review — requires an existing booking for this course
+app.post('/skills/:id/review', isAuthenticated, (req, res) => {
+    const skillId = req.params.id;
+    const { rating, comment } = req.body;
+
+    db.query(
+        'SELECT booking_id FROM bookings WHERE skill_id = ? AND learner_id = ? ORDER BY created_at DESC LIMIT 1',
+        [skillId, req.session.user.id],
+        (err, rows) => {
+            if (err) throw err;
+            if (rows.length === 0) {
+                req.flash('message', 'Sign up for this course before leaving a review.');
+                return res.redirect('/skills/' + skillId + '/review');
+            }
+
+            const bookingId = rows[0].booking_id;
+            db.query(
+                'INSERT INTO reviews (booking_id, rating, comment) VALUES (?, ?, ?)',
+                [bookingId, rating, comment],
+                (err2) => {
+                    if (err2) throw err2;
+                    req.flash('message', 'Review posted, thanks!');
+                    res.redirect('/skills/' + skillId + '/review');
+                }
+            );
+        }
+    );
+});
 
 
 // start server
