@@ -12,8 +12,11 @@
   <main class="dashboard-wrap">
     <div class="dashboard-header">
       <h1>Hi, <%= user.username %>!</h1>
-      <% if (user.role === 'instructor')  { %>
-        <a href="/skills/add" class="btn btn-register">+ Add New Skill Course</a>
+
+      <% if (user.role === 'instructor') { %>
+        <a href="/skills/add" class="btn btn-register">
+          + Add New Skill Course
+        </a>
       <% } %>
     </div>
 
@@ -34,21 +37,38 @@
 
       <select name="level">
         <option value="">All levels</option>
-        <option value="beginner" <%= filters.level === 'beginner' ? 'selected' : '' %>>Beginner</option>
-        <option value="intermediate" <%= filters.level === 'intermediate' ? 'selected' : '' %>>Intermediate</option>
-        <option value="advanced" <%= filters.level === 'advanced' ? 'selected' : '' %>>Advanced</option>
+        <option value="beginner" <%= filters.level === 'beginner' ? 'selected' : '' %>>
+          Beginner
+        </option>
+        <option value="intermediate" <%= filters.level === 'intermediate' ? 'selected' : '' %>>
+          Intermediate
+        </option>
+        <option value="advanced" <%= filters.level === 'advanced' ? 'selected' : '' %>>
+          Advanced
+        </option>
       </select>
 
       <select name="mode">
         <option value="">All modes</option>
-        <option value="online" <%= filters.mode === 'online' ? 'selected' : '' %>>Online</option>
-        <option value="offline" <%= filters.mode === 'offline' ? 'selected' : '' %>>In person</option>
-        <option value="hybrid" <%= filters.mode === 'hybrid' ? 'selected' : '' %>>Hybrid</option>
+        <option value="online" <%= filters.mode === 'online' ? 'selected' : '' %>>
+          Online
+        </option>
+        <option value="offline" <%= filters.mode === 'offline' ? 'selected' : '' %>>
+          In person
+        </option>
+        <option value="hybrid" <%= filters.mode === 'hybrid' ? 'selected' : '' %>>
+          Hybrid
+        </option>
       </select>
 
-      <button type="submit" class="btn btn-secondary">Search</button>
+      <button type="submit" class="btn btn-secondary">
+        Search
+      </button>
+
       <% if (filters.keyword || filters.category || filters.level || filters.mode) { %>
-        <a href="/dashboard" class="action-btn">Clear</a>
+        <a href="/dashboard" class="action-btn">
+          Clear
+        </a>
       <% } %>
     </form>
 
@@ -56,16 +76,26 @@
       <h2>All Skill Courses</h2>
 
       <% if (skills.length === 0) { %>
+
         <div class="empty-state">
+
           <% if (filters.keyword || filters.category || filters.level || filters.mode) { %>
-            <p>No skill courses match your search. <a href="/dashboard">Clear filters</a> to see everything.</p>
+            <p>
+              No skill courses match your search.
+              <a href="/dashboard">Clear filters</a> to see everything.
+            </p>
           <% } else { %>
             <p>No skill courses available yet.</p>
           <% } %>
+
         </div>
+
       <% } else { %>
+
         <div class="table-card">
+
           <table class="skills-table">
+
             <thead>
               <tr>
                 <th>Title</th>
@@ -75,48 +105,119 @@
                 <th>Mode</th>
                 <th>Instructor</th>
                 <th>Actions</th>
+
                 <% if (user.role === 'instructor' || user.role === 'admin') { %>
                   <th>Manage</th>
                 <% } %>
+
               </tr>
             </thead>
+
             <tbody>
+
               <% skills.forEach(skill => { %>
-                <tr>
-                  <td class="skill-title"><%= skill.title %></td>
-                  <td><%= skill.category %></td>
-                  <td><span class="badge badge-<%= skill.level %>"><%= skill.level %></span></td>
-                  <td><%= skill.duration %> hr</td>
-                  <td><%= skill.mode %></td>
-                  <td><%= skill.instructor_username || skill.instructor_id %></td>
-                  <td class="actions-cell">
-                    <% if (favouritedIds.includes(skill.skill_id)) { %>
-                      <a href="/favourites" class="action-btn action-btn-fav is-favourited">&#9733;</a>
-                    <% } else { %>
-                      <form action="/skills/<%= skill.skill_id %>/favourite" method="POST" class="inline-form">
-                        <button type="submit" class="action-btn action-btn-fav">&#9734;</button>
-                      </form>
-                    <% } %>
-                    <a href="/skills/<%= skill.skill_id %>/review" class="action-btn">Review</a>
+
+              <tr>
+
+                <td class="skill-title"><%= skill.title %></td>
+
+                <td><%= skill.category %></td>
+
+                <td>
+                  <span class="badge badge-<%= skill.level %>">
+                    <%= skill.level %>
+                  </span>
+                </td>
+
+                <td><%= skill.duration %> hr</td>
+
+                <td><%= skill.mode %></td>
+
+                <td>
+                  <%= skill.instructor_username || skill.instructor_id %>
+                </td>
+
+                <!-- ACTIONS -->
+                <td class="actions-cell">
+
+                  <% if (favouritedIds.includes(skill.skill_id)) { %>
+
+                    <a href="/favourites"
+                       class="action-btn action-btn-fav is-favourited">
+                      &#9733;
+                    </a>
+
+                  <% } else { %>
+
+                    <form action="/skills/<%= skill.skill_id %>/favourite"
+                          method="POST"
+                          class="inline-form">
+
+                      <button type="submit"
+                              class="action-btn action-btn-fav">
+                        &#9734;
+                      </button>
+
+                    </form>
+
+                  <% } %>
+
+                  <a href="/skills/<%= skill.skill_id %>/review"
+                     class="action-btn">
+                    Review
+                  </a>
+
+                </td>
+
+                <!-- MANAGE -->
+                <% if (user.role === 'admin' || (user.role === 'instructor' && skill.instructor_id === user.id)) { %>
+
+                  <td class="manage-cell">
+
+                    <a href="/skills/<%= skill.skill_id %>/edit"
+                       class="action-btn">
+                      Edit
+                    </a>
+
+                    <form action="/skills/<%= skill.skill_id %>/delete"
+                          method="POST"
+                          class="manage-form">
+
+                      <button
+                        type="submit"
+                        class="action-btn action-btn-delete"
+                        onclick="return confirm('Delete this skill course?')">
+
+                        Delete
+
+                      </button>
+
+                    </form>
+
                   </td>
 
-                  <% if (user.role === 'admin' || (user.role === 'instructor' && skill.instructor_id === user.id)) { %>
-                    <td class="actions-cell">
-                      <a href="/skills/<%= skill.skill_id %>/edit" class="action-btn">Edit</a>
-                      <form action="/skills/<%= skill.skill_id %>/delete" method="POST" class="inline-form">
-                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('Delete this skill course?')">Delete</button>
-                      </form>
-                    </td>
-                  <% } else if (user.role === 'instructor' || user.role === 'admin') { %>
-                    <td class="actions-cell">&mdash;</td>
-                  <% } %>
-                </tr>
+                <% } else if (user.role === 'instructor' || user.role === 'admin') { %>
+
+                  <td class="manage-cell">
+                    &mdash;
+                  </td>
+
+                <% } %>
+
+              </tr>
+
               <% }) %>
+
             </tbody>
+
           </table>
+
         </div>
+
       <% } %>
+
     </section>
+
   </main>
 
 </body>
