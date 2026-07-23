@@ -292,7 +292,7 @@ app.post('/skills/:id/edit', isAuthenticated, (req, res) => {
 
     db.query(sql, params, (err) => {
         if (err) throw err;
-        res.redirect('/skills');
+        res.redirect('/dashboard');
     });
 });
 
