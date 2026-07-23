@@ -544,6 +544,31 @@ app.post('/skills/:id/review', isAuthenticated, (req, res) => {
     );
 });
 
+// Toggle a course as a favourite for the logged-in user
+app.post('/skills/:id/favourite', isAuthenticated, (req, res) => {
+    const skillId = req.params.id;
+    const userId = req.session.user.id;
+    const back = req.get('Referer') || '/dashboard';
+
+    db.query('SELECT id FROM favourites WHERE user_id = ? AND skill_id = ?', [userId, skillId], (err, rows) => {
+        if (err) throw err;
+
+        if (rows.length > 0) {
+            db.query('DELETE FROM favourites WHERE id = ?', [rows[0].id], (err2) => {
+                if (err2) throw err2;
+                req.flash('message', 'Removed from favourites.');
+                res.redirect(back);
+            });
+        } else {
+            db.query('INSERT INTO favourites (user_id, skill_id) VALUES (?, ?)', [userId, skillId], (err2) => {
+                if (err2) throw err2;
+                req.flash('message', 'Added to favourites.');
+                res.redirect(back);
+            });
+        }
+    });
+});
+
 
 // start server
 const PORT = process.env.PORT || 3000;
