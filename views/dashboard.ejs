@@ -55,10 +55,10 @@
                   <td><%= skill.instructor_username || skill.instructor_id %></td>
                   <td class="actions-cell">
                     <% if (favouritedIds.includes(skill.skill_id)) { %>
-                      <a href="/favourites" class="action-btn action-btn-fav is-favourited">&#9733; Saved</a>
+                      <a href="/favourites" class="action-btn action-btn-fav is-favourited">&#9733;</a>
                     <% } else { %>
                       <form action="/skills/<%= skill.skill_id %>/favourite" method="POST" class="inline-form">
-                        <button type="submit" class="action-btn action-btn-fav">&#9734; Save</button>
+                        <button type="submit" class="action-btn action-btn-fav">&#9734;</button>
                       </form>
                     <% } %>
                     <a href="/skills/<%= skill.skill_id %>/review" class="action-btn">Review</a>
