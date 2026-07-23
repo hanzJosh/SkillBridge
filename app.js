@@ -227,10 +227,15 @@ app.get('/skills/:id/edit', isAuthenticated, (req, res) => {
     if (req.session.user.role === 'admin') {
         sql = 'SELECT * FROM skills WHERE skill_id = ?';
         params = [req.params.id];
-    } else if (req.session.user.role === 'instructor') {
-        sql = 'SELECT * FROM skills WHERE skill_id = ? AND instructor_id = ?';
+    }
+    else if (req.session.user.role === 'instructor') {
+        sql = `
+            SELECT * FROM skills
+            WHERE skill_id = ? AND instructor_id = ?
+        `;
         params = [req.params.id, req.session.user.id];
-    } else {
+    }
+    else {
         return res.status(403).send('Access denied');
     }
 
@@ -238,7 +243,7 @@ app.get('/skills/:id/edit', isAuthenticated, (req, res) => {
         if (err) throw err;
 
         if (results.length === 0) {
-            return res.status(404).send('Listing not found');
+            return res.status(404).send('Skill not found');
         }
 
         res.render('editSkill', {
@@ -251,7 +256,14 @@ app.get('/skills/:id/edit', isAuthenticated, (req, res) => {
 // Save an edited listing — only for the listing owner
 app.post('/skills/:id/edit', isAuthenticated, (req, res) => {
 
-    const { title, description, category, level, duration, mode } = req.body;
+    const {
+        title,
+        description,
+        category,
+        level,
+        duration,
+        mode
+    } = req.body;
 
     let sql;
     let params;
@@ -260,39 +272,58 @@ app.post('/skills/:id/edit', isAuthenticated, (req, res) => {
 
         sql = `
             UPDATE skills
-            SET title = ?, description = ?, category = ?,
-                level = ?, duration = ?, mode = ?
+            SET title = ?,
+                description = ?,
+                category = ?,
+                level = ?,
+                duration = ?,
+                mode = ?
             WHERE skill_id = ?
         `;
 
         params = [
-            title, description, category,
-            level, duration, mode,
+            title,
+            description,
+            category,
+            level,
+            duration,
+            mode,
             req.params.id
         ];
-
-    } else if (req.session.user.role === 'instructor') {
+    }
+    else if (req.session.user.role === 'instructor') {
 
         sql = `
             UPDATE skills
-            SET title = ?, description = ?, category = ?,
-                level = ?, duration = ?, mode = ?
-            WHERE skill_id = ? AND instructor_id = ?
+            SET title = ?,
+                description = ?,
+                category = ?,
+                level = ?,
+                duration = ?,
+                mode = ?
+            WHERE skill_id = ?
+            AND instructor_id = ?
         `;
 
         params = [
-            title, description, category,
-            level, duration, mode,
-            req.params.id, req.session.user.id
+            title,
+            description,
+            category,
+            level,
+            duration,
+            mode,
+            req.params.id,
+            req.session.user.id
         ];
-
-    } else {
+    }
+    else {
         return res.status(403).send('Access denied');
     }
 
     db.query(sql, params, (err) => {
         if (err) throw err;
-        res.redirect('/skills');
+
+        res.redirect('/dashboard');
     });
 });
 
