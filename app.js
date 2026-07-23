@@ -300,24 +300,21 @@ app.post('/skills/:id/edit', isAuthenticated, (req, res) => {
 
 app.post('/skills/:id/delete', isAuthenticated, (req, res) => {
 
-    let sql;
-    let params;
+    db.query(
+        'DELETE FROM skills WHERE skill_id = ?',
+        [req.params.id],
+        (err, result) => {
 
-    if (req.session.user.role === 'admin') {
-        sql = 'DELETE FROM skills WHERE skill_id = ?';
-        params = [req.params.id];
-    } else if (req.session.user.role === 'instructor') {
-        sql = 'DELETE FROM skills WHERE skill_id = ? AND instructor_id = ?';
-        params = [req.params.id, req.session.user.id];
-    } else {
-        return res.status(403).send('Access denied');
-    }
+            if (err) {
+                console.error(err);
+                return res.status(500).send(err.message);
+            }
 
-    db.query(sql, params, (err) => {
-        if (err) throw err;
-        res.redirect('/skills');
-    });
+            res.redirect('/skills');
+        }
+    );
 });
+
 
 
 // View profile
