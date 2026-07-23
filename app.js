@@ -21,11 +21,11 @@ app.use(flash());
 
 // Database
 const db = mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST || 'c237-hannah-mysql.mysql.database.azure.com',
     port: process.env.DB_PORT || 3306,
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || 'RP738964$',
-    database: process.env.DB_NAME || 'c237_skillbridge',
+    user: process.env.DB_USER || 'c237_016',
+    password: process.env.DB_PASSWORD || 'c237016@2026!',
+    database: process.env.DB_NAME || 'C237_016_t2ca2',
     // Azure Database for MySQL requires SSL — set DB_SSL=true on Render
     ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined
 });
