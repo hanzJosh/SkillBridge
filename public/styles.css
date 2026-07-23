@@ -385,3 +385,40 @@ body {
     align-items: flex-start;
   }
 }
+/* ==========================================
+   SkillBridge Primary Button
+========================================== */
+
+.btn-register {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px 20px;
+
+    background: #222;
+    color: #fff;
+
+    border: none;
+    border-radius: 8px;
+
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-register:hover {
+    background: #111;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+}
+
+.btn-register:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
