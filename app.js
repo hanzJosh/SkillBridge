@@ -301,7 +301,8 @@ app.post('/skills/:id/delete', isAuthenticated, isAdmin, (req, res) => {
 
     const skillId = req.params.id;
 
-    // Delete reviews linked to bookings of this skill
+    console.log('Deleting skill:', skillId);
+
     const deleteReviews = `
         DELETE r
         FROM reviews r
@@ -309,44 +310,50 @@ app.post('/skills/:id/delete', isAuthenticated, isAdmin, (req, res) => {
         WHERE b.skill_id = ?
     `;
 
-    db.query(deleteReviews, [skillId], (err) => {
+    db.query(deleteReviews, [skillId], (err, result) => {
+
         if (err) {
-            console.error(err);
+            console.error('Review delete error:', err);
             return res.status(500).send(err.message);
         }
 
-        // Delete bookings
+        console.log('Reviews deleted:', result.affectedRows);
+
         db.query(
             'DELETE FROM bookings WHERE skill_id = ?',
             [skillId],
-            (err) => {
+            (err, result) => {
 
                 if (err) {
-                    console.error(err);
+                    console.error('Booking delete error:', err);
                     return res.status(500).send(err.message);
                 }
 
-                // Delete favourites
+                console.log('Bookings deleted:', result.affectedRows);
+
                 db.query(
                     'DELETE FROM favourites WHERE skill_id = ?',
                     [skillId],
-                    (err) => {
+                    (err, result) => {
 
                         if (err) {
-                            console.error(err);
+                            console.error('Favourite delete error:', err);
                             return res.status(500).send(err.message);
                         }
 
-                        // Finally delete skill
+                        console.log('Favourites deleted:', result.affectedRows);
+
                         db.query(
                             'DELETE FROM skills WHERE skill_id = ?',
                             [skillId],
-                            (err) => {
+                            (err, result) => {
 
                                 if (err) {
-                                    console.error(err);
+                                    console.error('Skill delete error:', err);
                                     return res.status(500).send(err.message);
                                 }
+
+                                console.log('Skills deleted:', result.affectedRows);
 
                                 res.redirect('/dashboard');
                             }
