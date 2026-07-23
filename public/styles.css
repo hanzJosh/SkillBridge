@@ -877,6 +877,20 @@ body {
   .skills-table { display: block; overflow-x: auto; white-space: nowrap; }
 }
 
+.manage-cell {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.manage-form {
+    display: inline;
+    margin: 0;
+}
+
 /* ---------- Skills ---------- */
 .listings-wrap {
   max-width: 1080px;
