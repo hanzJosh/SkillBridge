@@ -219,7 +219,7 @@ app.post('/skills/add', isAuthenticated, isInstructor, (req, res) => {
 });
 
 // Show edit form — only for the listing owner
-app.get('/skills/:id/edit', isAuthenticated, isInstructor, (req, res) => {
+app.get('/skills/:id/edit', isAuthenticated, isInstructor,isAdmin, (req, res) => {
     const sql = 'SELECT * FROM skills WHERE skill_id = ? AND instructor_id = ?';
 
     db.query(sql, [req.params.id, req.session.user.id], (err, results) => {
@@ -231,7 +231,7 @@ app.get('/skills/:id/edit', isAuthenticated, isInstructor, (req, res) => {
 });
 
 // Save an edited listing — only for the listing owner
-app.post('/skills/:id/edit', isAuthenticated, isInstructor, (req, res) => {
+app.post('/skills/:id/edit', isAuthenticated, isInstructor,isAdmin, (req, res) => {
     const { title, description, category, level, duration, mode } = req.body;
 
     const sql = `
@@ -253,7 +253,7 @@ app.post('/skills/:id/edit', isAuthenticated, isInstructor, (req, res) => {
 });
 
 // Delete a listing — only for the listing owner
-app.post('/skills/:id/delete', isAuthenticated, isInstructor, (req, res) => {
+app.post('/skills/:id/delete', isAuthenticated, isInstructor,isAdmin, (req, res) => {
     const sql = 'DELETE FROM skills WHERE skill_id = ? AND instructor_id = ?';
 
     db.query(sql, [req.params.id, req.session.user.id], (err) => {

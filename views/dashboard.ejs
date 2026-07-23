@@ -12,7 +12,7 @@
   <main class="dashboard-wrap">
     <div class="dashboard-header">
       <h1>Hi, <%= user.username %>!</h1>
-      <% if (user.role === 'instructor' || user.role === 'admin') { %>
+      <% if (user.role === 'instructor')  { %>
         <a href="/skills/add" class="btn btn-register">+ Add New Skill Course</a>
       <% } %>
     </div>
