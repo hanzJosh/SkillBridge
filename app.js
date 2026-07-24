@@ -3,13 +3,27 @@ const mysql = require('mysql2');
 const session = require('express-session');
 const flash = require('connect-flash');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+
 
 const app = express();
+
+// multer for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/images');// to save uploaded files
+    },
+    filename: (req, file, cb) => {
+        cb(null,Date.now() + '-' + file.originalname); 
+    }
+});
+const upload = multer({ storage: storage });
 
 //middleware
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+
 
 // Session
 app.use(session({
@@ -380,6 +394,48 @@ app.post('/profile', isAuthenticated, (req, res) => {
         req.session.user.email = email;
         res.redirect('/profile');
     });
+});
+
+// Show edit profile page
+app.get('/editProfile', isAuthenticated, (req, res) => {
+    const sql = 'SELECT * FROM users WHERE user_id = ?';
+
+    db.query(sql, [req.session.user.id], (err, results) => {
+        if (err) throw err;
+        if (results.length === 0) return res.status(404).send('Unable to edit profile. User not found');
+
+        res.render('editProfile', {
+            user: req.session.user,
+            profile: results[0]
+        });
+    });
+});
+
+// Post and update changes to user profile 
+app.post('/editProfile', isAuthenticated, upload.single('image'), (req, res) => {
+    const { username, email } = req.body;
+
+    const profileImage = req.file ? req.file.filename : null;
+
+    const sql = `
+        UPDATE users
+        SET username = ?, email = ?,
+            profile_image = COALESCE(?, profile_image)
+        WHERE user_id = ?
+    `;
+
+    db.query(
+        sql,
+        [username , email,profileImage, req.session.user.id],
+        (err) => {
+            if (err) {
+                console.error('Profile update error:', err);
+                return res.status(500).send('Unable to update profile');
+            }
+
+            res.redirect('/profile');
+        }
+    );
 });
 
 

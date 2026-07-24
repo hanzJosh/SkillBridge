@@ -186,6 +186,30 @@ body {
   font-size: 1.3rem;
   margin: 0 0 18px;
 }
+/* ---------- Profile layout ---------- */
+.profile-wrap {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.profile-wrap .container {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.profile-wrap h2 {
+    margin-bottom: 30px;
+}
+
+.profile-wrap table {
+    margin-top: 20px;
+}
+
+.profile-wrap th,
+.profile-wrap td {
+    padding: 20px;
+    vertical-align: middle;
+}
 
 /* ---------- Empty state ---------- */
 .empty-state {

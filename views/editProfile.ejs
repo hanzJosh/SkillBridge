@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | SkillBridge</title>
+    <link rel="stylesheet" href="/styles.css">
+    
+</head>
+<body>
+    <%- include('partials/navbar') %>
+      <main class="editProfile-wrap ">
+    <div class="editProfile-header">
+
+    <div class="container mt-5">
+    <h2 class="text-center mb-5">Edit Profile</h2>
+    <h4>Please input your updated information below.</h4>
+    <form action="/editProfile" method="POST" enctype="multipart/form-data" class="mx-auto" style="max-width: 500px;">
+
+        <div class="mb-5">
+            <label class="form-label fw-bold">Current Profile Image</label>
+        <br>
+
+        <img 
+        src="/images/sample-profile.jpg"
+        width="100"
+        class="img-thumbnail mb-2"
+        alt="Profile Image ">
+        </div>
+
+
+
+      <div class="mb-5">
+        <label for="image" class="form-label">Select your updated profile image:</label>
+        <input class="form-control" type="file" id="image" name="image" accept="image/*" >
+      </div>
+
+      <div class="mb-5">
+        <label for="username" class="form-label fw-bold">Username</label>
+        <input type="text" class="form-control" id="username" name="username" value="<%= profile.username %>">
+      </div>
+
+      <div class="mb-5">
+        <label for="Role" class="form-label fw-bold">Role</label>
+        <input type="text" class="form-control"value="<%= profile.role %>"
+        readonly> 
+      </div>
+
+      <div class="mb-5">
+        <label for="Email" class="form-label fw-bold">Email</label>
+        <input type="email" class="form-control" id="email" name="email" value="<%= profile.email %>">
+      </div>
+
+      <div class="mb-5">
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
